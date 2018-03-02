@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+
+<robot name="abb_irb2400" xmlns:xacro="http://ros.org/wiki/xacro">
+    <!-- include robot -->
+	<xacro:include filename="$(find abb_irb2400_support)/urdf/irb2400_macro.xacro"/>
+	<xacro:abb_irb2400 prefix=""/>
+
+	<!-- parameters -->
+	<xacro:property name="platform_thickness" value="0.1"/>
+
+	<!-- color definitions -->
+    <material name="blue">
+        <color rgba="0 0 1 1"/>
+    </material>
+    <material name="yellow">
+        <color rgba="1 1 0 1"/>
+    </material>
+    <material name="orange">
+        <color rgba="1 0.66 0.48 1"/>
+    </material>
+    <material name="red">
+        <color rgba="1 0 0 1"/>
+    </material>
+    <material name="light_blue">
+        <color rgba="0.78 0.94 0.965 1"/>
+    </material>
+    <material name="light_gray">
+        <color rgba="0.7 0.7 0.7 1"/>
+    </material>
+
+	<!-- environment link definitions -->
+	<link name="world_frame"/>
+	<link name="robot_platform_link">
+		<visual>
+			<origin xyz="0.0 0.0 -${platform_thickness * 0.5}" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.5 0.5 ${platform_thickness}"/>
+			</geometry>
+			<material name="orange"/>
+		</visual>
+	</link>
+	<link name="cnc_link">
+		<visual>
+			<geometry>
+                <mesh filename="package://mtconnect_example_launch/meshes/cnc_lathe.dae"/>
+			</geometry>
+			<material name="light_gray"/>
+		</visual>
+        <collision name="cnc_base">
+            <geometry>
+                <box size="2.0 1.6 0.7"/>
+            </geometry>
+            <origin xyz="1.0 0.8 0.35"/>
+        </collision>
+        <collision name="cnc_right_wall">
+            <geometry>
+                <box size="0.5 1.6 0.9"/>
+            </geometry>
+            <origin xyz="0.25 0.8 1.15"/>
+        </collision>
+        <collision name="cnc_left_wall">
+            <geometry>
+                <box size="0.75 1.6 0.9"/>
+            </geometry>
+            <origin xyz="1.625 0.8 1.15"/>
+        </collision>
+	</link>
+
+	<!-- joint definitions -->
+	<joint name="world_to_platform_joint" type ="fixed">
+		<origin xyz="-0.2 0 2.8" rpy="3.1417 0 0"/>
+		<parent link="world_frame"/>
+		<child link="robot_platform_link"/>
+	</joint>
+	<joint name="world_to_cnc_joint" type ="fixed">
+		<origin xyz="1.7 -1.0 0.0" rpy="0 0 1.5708"/>
+		<parent link="world_frame"/>
+		<child link="cnc_link"/>
+	</joint>
+	<joint name="platform_to_base_joint" type ="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<parent link="robot_platform_link"/>
+		<child link="base_link"/>
+	</joint>
+</robot>
