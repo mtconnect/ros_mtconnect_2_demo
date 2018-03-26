@@ -1,0 +1,109 @@
+/*
+Copyright 2018 Southwest Research Institute
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#ifndef __CECCREBOT_DEMO_DEMO_H__
+#define __CECCREBOT_DEMO_DEMO_H__
+
+#include <condition_variable>
+#include <mutex>
+
+#include <ros/ros.h>
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/server/simple_action_server.h>
+
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <control_msgs/GripperCommandAction.h>
+#include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
+#include <tf_conversions/tf_eigen.h>
+#include <mtconnect_bridge/DeviceWorkAction.h>
+
+typedef actionlib::SimpleActionClient<control_msgs::GripperCommandAction> GraspActionClient;
+typedef std::shared_ptr<GraspActionClient> GraspActionClientPtr;
+typedef std::shared_ptr<moveit::planning_interface::MoveGroupInterface> MoveGroupPtr;
+
+namespace ceccrebot_demo
+{
+
+struct Config
+{
+  std::string world_frame_id = "world";
+  std::string arm_group_name = "manipulator";
+  std::string wrist_link_name = "wrist";
+  std::string motion_plan_service = "plan";
+  std::string marker_topic = "markers";
+  std::string grasp_action_name = "grasp";
+  double gripper_effort = 1.0;
+  double gripper_close_position = 0.0;
+  double gripper_open_position = 100.0;
+};
+
+bool loadConfig(ros::NodeHandle &nh, Config &cfg);
+
+class Demo
+{
+public:
+  Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp);
+
+  typedef actionlib::SimpleActionServer<mtconnect_bridge::DeviceWorkAction> MTConnectWorkServer;
+  void run();
+
+  void work_dispatch(mtconnect_bridge::DeviceWorkGoal::ConstPtr work);
+
+  //void move_to_wait_position();
+  //void move_to_prepare_position();
+  //geometry_msgs::PoseStamped locatePart();
+
+  //std::vector<geometry_msgs::PoseStamped> create_pick_moves(geometry_msgs::PoseStamped &pose);
+  //std::vector<geometry_msgs::PoseStamped> create_place_moves();
+  void pick(const std::vector<geometry_msgs::PoseStamped>& pick_poses);
+  void place(const std::vector<geometry_msgs::PoseStamped>& place_poses);
+  void go_to_pose(const std::string &pose_name);
+
+protected:
+  void mtconnect_work_available();
+  void mtconnect_work_preempted();
+
+  void cmd_gripper(bool close);
+  //void set_attached_object(bool attach, moveit_msgs::RobotState &robot_state);
+  //void reset_world();
+
+  bool create_motion_plan(
+      const geometry_msgs::PoseStamped &pose_target,
+      const moveit_msgs::RobotState &start_robot_state,
+      moveit::planning_interface::MoveGroupInterface::Plan &plan);
+
+  //void show_box(bool show);
+
+protected:
+  Config cfg_;
+  ros::Publisher marker_publisher_;
+
+  MTConnectWorkServer mtconnect_server_;
+  mtconnect_bridge::DeviceWorkGoal::ConstPtr curr_work_;
+  std::mutex mutex_;
+  std::condition_variable work_available_condition_;
+
+  ros::ServiceClient motion_plan_client_;
+  GraspActionClientPtr grasp_action_client_ptr_;
+  MoveGroupPtr move_group_ptr_;
+
+  tf::TransformBroadcaster tf_broadcaster_;
+  tf::TransformListener tf_listener_;
+};
+
+} //end namespace
+
+#endif
