@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="rviz" default="false"/>
+  <arg name="sim_robot" default="true"/>
+  <arg name="sim_gripper" default="true"/>
+  <arg name="robot_ip" if="$(arg sim_robot)"/>
+  <arg name="gripper_ip" if="$(arg sim_gripper)"/>
+  <arg name="use_bswap" default="false"/>
+
+  <!-- Robot description and planning nodes -->
+  <include file="$(find demo_abb_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+  <include file="$(find demo_abb_moveit_config)/launch/move_group.launch">
+    <arg name="fake_execution" value="$(arg sim_robot)" />
+    <arg name="publish_monitored_planning_scene" value="true" />
+  </include>
+
+  <!-- Robot interfaces, real or simulated -->
+  <group unless="$(arg sim_robot)">
+  </group>
+
+  <group if="$(arg sim_robot)">
+    <include file="$(find industrial_robot_simulator)/launch/robot_interface_simulator.launch" />
+  </group>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!--
+  <group ns="robot2">
+  <include file="$(find ur10_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+  <include file="$(find demo_ur10_moveit_config)/launch/move_group.launch">
+    <arg name="publish_monitored_planning_scene" value="true" />
+  </include>
+  </group>
+  -->
+
+  <!-- additional state publishers for envrionment and tools-->
+  <param name="env_description"
+     command="$(find xacro)/xacro.py --inorder $(find ceccrebot_demo_support)/urdf/mtconnect_demo_env.xacro" />
+  <node pkg="robot_state_publisher" type="state_publisher" name="env_pub">
+      <remap from="robot_description" to="env_description"/>
+  </node>
+
+  <!--
+  <param name="tool_description" textfile="$(find mtconnect_example_launch)/urdf/mtconnect_m16ib20_demo_tool.urdf" />
+  <node pkg="robot_state_publisher" type="state_publisher" name="tool_pub">
+      <remap from="robot_description" to="tool_description"/>
+  </node>
+  -->
+
+  <!-- TODO -->
+  <!-- Will need to replace grasping action nodes with real drivers -->
+  <!-- real gripper drivers -->
+  <!--
+  <group unless="$(arg sim_gripper)">
+
+    <remap from="/gripper_action_service/grasp_execution_action" to="/gripper_action_service"/>
+    <include file="$(find ceccrebot_demo_support)/launch/mtconnect_grasp_action.launch">
+      <arg name="robot_ip" value="$(arg gripper_ip)"/>
+      <arg name="port" value="11010"/>
+      <arg name="node_name" value="gripper_action_service"/>
+      <arg name="use_bswap" value="$(arg use_bswap)" />
+    </include>
+
+    <remap from="/vise_action_service/grasp_execution_action" to="/vise_action_service"/>
+    <include file="$(find ceccrebot_demo_support)/launch/mtconnect_grasp_action.launch">
+      <arg name="robot_ip" value="$(arg gripper_ip)"/>
+      <arg name="port" value="11011"/>
+      <arg name="node_name" value="vise_action_service"/>
+      <arg name="use_bswap" value="$(arg use_bswap)" />
+    </include>
+
+  </group>
+  -->
+
+  <!-- TODO -->
+  <!-- simulated gripper drivers -->
+  <!--
+  <group if="$(arg sim_gripper)">
+
+    <node pkg="object_manipulation_tools" type="grasp_action_service" name="gripper_interface">
+      <remap from="/grasp_execution_action" to="/gripper_action_service"/>
+    </node>
+
+    <node pkg="object_manipulation_tools" type="grasp_action_service" name="vise_interface">
+      <remap from="/grasp_execution_action" to="/vise_action_service"/>
+    </node>
+
+  </group>
+  -->
+
+  <!-- Visualization -->
+  <node if="$(arg rviz)" pkg="rviz" type="rviz" name="ceccrebot_viz"
+        args="-d $(find ceccrebot_demo_support)/rviz/demo.rviz" />
+</launch>

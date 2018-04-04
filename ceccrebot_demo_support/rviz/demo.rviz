@@ -3,9 +3,10 @@ Panels:
     Help Height: 84
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /Global Options1
       Splitter Ratio: 0.517064989
-    Tree Height: 310
+    Tree Height: 957
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -127,7 +128,7 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
-        Planning Group: manipulator
+        Planning Group: arm
         Query Goal State: true
         Query Start State: false
         Show Workspace: false
@@ -211,7 +212,32 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        cnc_link:
+        cmm_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        cnc_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        conveyor_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        conveyor_2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        conveyor_3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        conveyor_4:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -231,11 +257,83 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base:
+          Value: true
+        base_link:
+          Value: true
+        cmm_base:
+          Value: true
+        cnc_base:
+          Value: true
+        conveyor_1:
+          Value: true
+        conveyor_2:
+          Value: true
+        conveyor_3:
+          Value: true
+        conveyor_4:
+          Value: true
+        link_1:
+          Value: true
+        link_2:
+          Value: true
+        link_3:
+          Value: true
+        link_4:
+          Value: true
+        link_5:
+          Value: true
+        link_6:
+          Value: true
+        robot_platform_link:
+          Value: true
+        tool0:
+          Value: true
+        world_frame:
+          Value: true
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world_frame:
+          cmm_base:
+            {}
+          cnc_base:
+            {}
+          conveyor_1:
+            {}
+          conveyor_2:
+            {}
+          conveyor_3:
+            {}
+          conveyor_4:
+            {}
+          robot_platform_link:
+            base_link:
+              base:
+                {}
+              link_1:
+                link_2:
+                  link_3:
+                    link_4:
+                      link_5:
+                        link_6:
+                          tool0:
+                            {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 60; 60; 60
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: world_frame
     Frame Rate: 30
   Name: root
   Tools:
@@ -246,42 +344,42 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/XYOrbit
-      Distance: 7.10330677
+      Class: rviz/Orbit
+      Distance: 7.23377132
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.113567002
-        Y: 0.105920002
-        Z: 2.23518001e-07
+        X: -0.0666769296
+        Y: -0.0625672713
+        Z: -0.291665316
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.394796878
+      Pitch: 0.879797339
       Target Frame: base_link
-      Value: XYOrbit (rviz)
-      Yaw: 0.741764247
+      Value: Orbit (rviz)
+      Yaw: 4.70679855
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: false
-  Height: 1006
+    collapsed: true
+  Height: 1176
   Help:
     collapsed: false
-  Hide Left Dock: false
-  Hide Right Dock: false
+  Hide Left Dock: true
+  Hide Right Dock: true
   MotionPlanning:
     collapsed: false
   MotionPlanning - Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002b8000003a8fc0200000007fb000000100044006900730070006c0061007900730100000028000001cb000000d700fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000a0056006900650077007300000003b0000000b0000000ad00fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000257000001790000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001f9000001d7000001cc00ffffff000003d2000003a800000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000002b800000452fc0200000006fb000000100044006900730070006c006100790073000000002800000452000000d700fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000257000001790000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006703000003330000016e000002ba0000022d000000010000015c00000452fc0200000001fb0000000a00560069006500770073000000002800000452000000ad00ffffff000006400000045200000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
-    collapsed: false
-  Width: 1680
-  X: 0
+    collapsed: true
+  Width: 1600
+  X: 1600
   Y: 24

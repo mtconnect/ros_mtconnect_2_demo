@@ -1,0 +1,195 @@
+<?xml version="1.0" ?>
+<robot name="multi_robot_demo_env" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- parameters -->
+  <xacro:property name="platform_thickness" value="0.5"/>
+
+  <!-- color definitions -->
+  <material name="blue">
+    <color rgba="0 0 1 1"/>
+  </material>
+  <material name="yellow">
+    <color rgba="1 1 0 1"/>
+  </material>
+  <material name="orange">
+    <color rgba="1 0.66 0.48 1"/>
+  </material>
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+  <material name="light_blue">
+    <color rgba="0.78 0.94 0.965 1"/>
+  </material>
+  <material name="light_gray">
+    <color rgba="0.7 0.7 0.7 1"/>
+  </material>
+
+  <!-- robot definitions, also defined in robot urdf -->
+  <link name="cnc_robot_base_link"/>
+  <link name="cmm_robot_base_link"/>
+  <link name="world_frame"/>
+
+  <!-- Robot support -->
+  <xacro:macro name="platform" params="name material *location">
+    <link name="${name}_platform_link">
+      <visual>
+        <origin xyz="0.0 0.0 ${platform_thickness * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.5 0.5 ${platform_thickness}"/>
+        </geometry>
+        <material name="${material}"/>
+      </visual>
+    </link>
+
+    <joint name="world_to_${name}_platform_joint" type ="fixed">
+      <xacro:insert_block name="location"/>
+      <parent link="world_frame"/>
+      <child link="${name}_platform_link"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:platform name="cnc" material="orange">
+    <origin xyz="2.0 0.0 0.0"/>
+  </xacro:platform>
+  <xacro:platform name="cmm" material="light_blue">
+    <origin xyz="-2.0 0.0 0.0"/>
+  </xacro:platform>
+
+  <joint name="platform_to_cnc_robot_joint" type ="fixed">
+    <origin xyz="0 0 ${platform_thickness}"/>
+    <parent link="cnc_platform_link"/>
+    <child link="cnc_robot_base_link"/>
+  </joint>
+  <joint name="platform_to_cmm_robot_joint" type ="fixed">
+    <origin xyz="0 0 ${platform_thickness}"/>
+    <parent link="cmm_platform_link"/>
+    <child link="cmm_robot_base_link"/>
+  </joint>
+
+  <!-- CNC -->
+  <xacro:macro name="cnc" params="id *location">
+    <link name="cnc_${id}_base">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/cnc_lathe.dae"/>
+        </geometry>
+        <material name="light_gray"/>
+      </visual>
+      <collision name="cnc_${id}_base">
+        <geometry>
+          <box size="2.0 1.6 0.7"/>
+        </geometry>
+        <origin xyz="1.0 0.8 0.35"/>
+      </collision>
+      <collision name="cnc_${id}_back">
+        <geometry>
+          <box size="2.0 1.0 0.9"/>
+        </geometry>
+        <origin xyz="1.0 0.5 1.15"/>
+      </collision>
+      <collision name="cnc_${id}_right_wall">
+        <geometry>
+          <box size="0.5 1.6 0.9"/>
+        </geometry>
+        <origin xyz="0.25 0.8 1.15"/>
+      </collision>
+      <collision name="cnc_${id}_left_wall">
+        <geometry>
+          <box size="0.75 1.6 1.5"/>
+        </geometry>
+        <origin xyz="1.625 0.8 1.45"/>
+      </collision>
+    </link>
+
+    <joint name="world_to_cnc_${id}_joint" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="world_frame"/>
+      <child link="cnc_${id}_base"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:cnc id="A">
+    <origin xyz="3.0 2.7 0.0" rpy="0 0 3.1415"/>
+  </xacro:cnc>
+  <xacro:cnc id="B">
+    <origin xyz="4.7 -1.0 0.0" rpy="0 0 1.5708"/>
+  </xacro:cnc>
+
+  <!-- CMM -->
+  <xacro:macro name="cmm" params="id *location">
+    <link name="cmm_${id}_base">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/CMM_color.dae"/>
+        </geometry>
+        <material name="light_gray"/>
+      </visual>
+      <collision name="cmm_${id}_base">
+        <geometry>
+          <box size="2.2 1.3 1.0"/>
+        </geometry>
+        <origin xyz="0.0 -0.65 0.5"/>
+      </collision>
+      <collision name="cmm_${id}_probe_area">
+        <geometry>
+          <box size="1.2 0.5 1.2"/>
+        </geometry>
+        <origin xyz="0.5 -0.4 2.15"/>
+      </collision>
+      <collision name="cmm_${id}_right_wall">
+        <geometry>
+          <box size="0.4 1.5 1.0"/>
+        </geometry>
+        <origin xyz="1.0 -0.7 1.5"/>
+      </collision>
+      <collision name="cmm_${id}_left_wall">
+        <geometry>
+          <box size="0.3 0.4 1.0"/>
+        </geometry>
+        <origin xyz="-0.2 -0.4 1.5"/>
+      </collision>
+    </link>
+
+    <joint name="world_to_cmm_${id}_joint" type ="fixed">
+      <xacro:insert_block name="location"/>
+      <parent link="world_frame"/>
+      <child link="cmm_${id}_base"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:cmm id="A">
+    <origin xyz="-2.5 2.5 0.0" />
+  </xacro:cmm>
+
+  <xacro:macro name="conveyor" params="id *location">
+    <link name="conveyor_${id}">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/conveyor_piece.dae"/>
+        </geometry>
+        <origin xyz="0 0 0.725" rpy="0 0 1.5708"/>
+      </visual>
+      <collision name="conveyor_${id}_coll">
+        <geometry>
+          <box size="1.5 0.8 0.8"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.4"/>
+      </collision>
+    </link>
+
+    <joint name="world_to_conveyor_${id}" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="world_frame"/>
+      <child link="conveyor_${id}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:conveyor id="1">
+    <origin xyz="0.0 0.0 0.0" />
+  </xacro:conveyor>
+  <xacro:conveyor id="2">
+    <origin xyz="2.0 -2.0 0.0" rpy="0.0 0.0 1.5708" />
+  </xacro:conveyor>
+  <xacro:conveyor id="3">
+    <origin xyz="-2.0 -2.0 0.0" rpy="0.0 0.0 -1.5708" />
+  </xacro:conveyor>
+</robot>

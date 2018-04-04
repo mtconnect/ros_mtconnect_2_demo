@@ -62,6 +62,7 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
     throw std::runtime_error("ROS has shutdown");
 
   //start the MTConnect action interface
+  //  assume these callbacks are being invoked in their own threads
   mtconnect_server_.registerGoalCallback(boost::bind(&Demo::mtconnect_work_available, this));
   mtconnect_server_.registerPreemptCallback(boost::bind(&Demo::mtconnect_work_preempted, this));
   mtconnect_server_.start();
@@ -77,6 +78,7 @@ void ceccrebot_demo::Demo::run()
     std::unique_lock<std::mutex> lock(mutex_);
     work_available_condition_.wait_for(lock, std::chrono::seconds{2});
 
+    //Holds mutex until work completes
     if (curr_work_ != nullptr)
       work_dispatch(curr_work_);
   }
@@ -86,6 +88,8 @@ void ceccrebot_demo::Demo::mtconnect_work_available()
 {
   mtconnect_bridge::DeviceWorkGoal::ConstPtr goal = mtconnect_server_.acceptNewGoal();
 
+  //Replace any current work and notify main thread
+  //TODO: a more formal preempting strategy
   std::lock_guard<std::mutex> guard(mutex_);
   curr_work_ = goal;
   work_available_condition_.notify_one();
