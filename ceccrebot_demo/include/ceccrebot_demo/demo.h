@@ -40,7 +40,7 @@ namespace ceccrebot_demo
 struct Config
 {
   std::string world_frame_id = "world";
-  std::string arm_group_name = "manipulator";
+  std::string arm_group_name = "arm";
   std::string wrist_link_name = "wrist";
   std::string motion_plan_service = "plan";
   std::string marker_topic = "markers";

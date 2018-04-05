@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<robot name="single_robot_demo_env" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- macros -->
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro"/>
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/materials.xacro"/>
+
+  <!-- parameters -->
+  <xacro:property name="platform_thickness" value="0.5"/>
+  <xacro:property name="root_frame_id" value="world_frame"/>
+
+  <link name="${root_frame_id}"/>
+
+  <!-- Robot support -->
+  <xacro:platform name="cnc" parent_link="${root_frame_id}" thickness="${platform_thickness}" material="orange">
+    <origin xyz="0.0 0.0 ${platform_thickness}"/>
+  </xacro:platform>
+
+  <!--
+  <joint name="platform_to_base_joint" type ="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="robot_platform_link"/>
+    <child link="cnc_robot_base_link"/>
+  </joint>
+  -->
+
+  <!-- CNC -->
+  <xacro:cnc id="A" parent_link="${root_frame_id}">
+    <origin xyz="1.0 2.7 0.0" rpy="0 0 3.1415"/>
+  </xacro:cnc>
+
+  <!-- CMM -->
+  <xacro:cmm id="A" parent_link="${root_frame_id}">
+    <origin xyz="0.5 -2.5 0.0" rpy="0 0 3.1415"/>
+  </xacro:cmm>
+
+  <xacro:conveyor id="1" parent_link="${root_frame_id}">
+    <origin xyz="1.75 0.0 0.0" />
+  </xacro:conveyor>
+  <xacro:conveyor id="2" parent_link="${root_frame_id}">
+    <origin xyz="3.25 0.0 0.0" />
+  </xacro:conveyor>
+  <xacro:conveyor id="3" parent_link="${root_frame_id}">
+    <origin xyz="-1.75 0.0 0.0" />
+  </xacro:conveyor>
+  <xacro:conveyor id="4" parent_link="${root_frame_id}">
+    <origin xyz="-3.25 0.0 0.0" />
+  </xacro:conveyor>
+</robot>
