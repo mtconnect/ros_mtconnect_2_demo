@@ -8,22 +8,34 @@ sys.path.append(os.path.join(os.getenv('HOME'), 'Workspaces/ceccrebot/src/ros_mt
 
 import rospy
 import mtconnect_bridge
-import simulator.src
+from simulator.src.binding import Robot
 
 class MTConnectDemo:
     def __init__(self):
         self._bridge = mtconnect_bridge.Bridge()
-        self._robot = simulator.src.Robot()
+        self._robot = Robot()
 
         #Connect simulated bot to bridge
-        self._robot.superstate.on_enter('base:activated:loading', self.loading_work)
+        self._robot.superstate.on_enter('base:operational:loading', self.loading_work)
+        self._robot.superstate.on_enter('base:operational:unloading', self.unloading_work)
 
     def loading_work(self):
-        self._bridge.do_work('move', '{dest: cnc}')
+        self._bridge.do_work('move', 'conveyor')
+        self._bridge.wait_for_work('move')
+        self._bridge.do_work('move', 'cnc')
+        self._bridge.wait_for_work('move')
+        self._bridge.do_work('move', 'home')
+        self._bridge.wait_for_work('move')
+        self._robot.superstate.event('robot', 'robot', 'SubTask_MaterialLoad', 'COMPLETE')
+
+    def unloading_work(self):
+        self._bridge.do_work('move', 'place')
+        self._bridge.wait_for_work('move')
+        self._robot.superstate.event('robot', 'robot', 'SubTask_MaterialUnload', 'COMPLETE')
 
     def spin(self):
-        #TODO: how does this spin inside the mtconnect simulator?
-        pass
+        #Let the threads started in the simulator run
+        rospy.spin()
 
 def main():
     rospy.init_node('mtconnect_demo')

@@ -49,14 +49,17 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   // marker publisher (rviz visualization)
   marker_publisher_ = nh.advertise<visualization_msgs::Marker>(cfg_.marker_topic, 1);
 
+  // TODO
   // grasp action client (vacuum gripper)
-  grasp_action_client_ptr_ = GraspActionClientPtr(new GraspActionClient(cfg_.grasp_action_name, true));
+  //grasp_action_client_ptr_ = GraspActionClientPtr(new GraspActionClient(cfg_.grasp_action_name, true));
 
   // waiting to establish connections
+  /*
   while(ros::ok() && ! grasp_action_client_ptr_->waitForServer(ros::Duration(2.0f)))
   {
     ROS_INFO_STREAM("Waiting for grasp action server: " << cfg_.grasp_action_name);
   }
+  */
 
   if (! ros::ok())
     throw std::runtime_error("ROS has shutdown");
@@ -71,7 +74,7 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
 void ceccrebot_demo::Demo::run()
 {
   // move to a "clear" position
-  go_to_pose("home");
+  go_to_pose("allzeros");
 
   while (ros::ok())
   {
@@ -101,10 +104,12 @@ void ceccrebot_demo::Demo::mtconnect_work_preempted()
 
 void ceccrebot_demo::Demo::work_dispatch(mtconnect_bridge::DeviceWorkGoal::ConstPtr work)
 {
+  //send feedback: performing work
   if (work->type == "move")
   {
     go_to_pose(work->data);
   }
+  //send completion
 }
 
 void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
@@ -134,6 +139,8 @@ void ceccrebot_demo::Demo::cmd_gripper(bool close)
   else
     grasp_goal.command.position = cfg_.gripper_open_position;
 
+  //TODO
+  /*
   grasp_action_client_ptr_->sendGoal(grasp_goal);
   if (grasp_action_client_ptr_->waitForResult(ros::Duration(4.0f)))
   {
@@ -146,6 +153,7 @@ void ceccrebot_demo::Demo::cmd_gripper(bool close)
   {
     throw std::runtime_error(std::string("Gripper failed to ") + (close ? "close" : "open"));
   }
+  */
 }
 
 bool ceccrebot_demo::Demo::create_motion_plan(

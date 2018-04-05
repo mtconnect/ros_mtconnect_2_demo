@@ -7,25 +7,39 @@
   <arg name="gripper_ip" if="$(arg sim_gripper)"/>
   <arg name="use_bswap" default="false"/>
 
+  <!-- Define the overall environment without the robot(s) -->
+  <param name="env_description"
+     command="$(find xacro)/xacro.py --inorder $(find ceccrebot_demo_support)/urdf/single_robot_demo_env.xacro" />
+  <node pkg="robot_state_publisher" type="state_publisher" name="env_pub">
+      <remap from="robot_description" to="env_description"/>
+  </node>
+
   <!-- Robot description and planning nodes -->
-  <include file="$(find demo_abb_moveit_config)/launch/planning_context.launch">
-    <arg name="load_robot_description" value="true"/>
-  </include>
+  <group ns="abb">
+    <include file="$(find demo_abb_moveit_config)/launch/planning_context.launch">
+      <arg name="load_robot_description" value="true"/>
+    </include>
 
-  <include file="$(find demo_abb_moveit_config)/launch/move_group.launch">
-    <arg name="fake_execution" value="$(arg sim_robot)" />
-    <arg name="publish_monitored_planning_scene" value="true" />
-  </include>
+    <include file="$(find demo_abb_moveit_config)/launch/move_group.launch">
+      <arg name="fake_execution" value="false" />
+      <arg name="publish_monitored_planning_scene" value="true" />
+    </include>
 
-  <!-- Robot interfaces, real or simulated -->
-  <group unless="$(arg sim_robot)">
+    <!-- Robot interfaces, real or simulated -->
+    <group unless="$(arg sim_robot)">
+    </group>
+
+    <group if="$(arg sim_robot)">
+      <include file="$(find industrial_robot_simulator)/launch/robot_interface_simulator.launch" />
+    </group>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <!-- place robot in scene -->
+    <!-- platform link defined in the env_description xacro file -->
+    <node name="robot_base_publisher" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 0 0 0 cnc_platform_link base_link 20" />
   </group>
-
-  <group if="$(arg sim_robot)">
-    <include file="$(find industrial_robot_simulator)/launch/robot_interface_simulator.launch" />
-  </group>
-
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
   <!--
   <group ns="robot2">
@@ -38,12 +52,6 @@
   </group>
   -->
 
-  <!-- additional state publishers for envrionment and tools-->
-  <param name="env_description"
-     command="$(find xacro)/xacro.py --inorder $(find ceccrebot_demo_support)/urdf/mtconnect_demo_env.xacro" />
-  <node pkg="robot_state_publisher" type="state_publisher" name="env_pub">
-      <remap from="robot_description" to="env_description"/>
-  </node>
 
   <!--
   <param name="tool_description" textfile="$(find mtconnect_example_launch)/urdf/mtconnect_m16ib20_demo_tool.urdf" />
@@ -95,5 +103,5 @@
 
   <!-- Visualization -->
   <node if="$(arg rviz)" pkg="rviz" type="rviz" name="ceccrebot_viz"
-        args="-d $(find ceccrebot_demo_support)/rviz/demo.rviz" />
+        args="-d $(find ceccrebot_demo_support)/rviz/single_robot_demo.rviz" />
 </launch>

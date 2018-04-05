@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /MotionPlanning1
       Splitter Ratio: 0.517064989
     Tree Height: 246
   - Class: rviz/Help
@@ -214,7 +213,17 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        cmm_platform_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         cnc_A_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        cnc_B_base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -235,11 +244,6 @@ Visualization Manager:
           Show Trail: false
           Value: true
         conveyor_3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        conveyor_4:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -265,9 +269,11 @@ Visualization Manager:
           Value: true
         cmm_A_base:
           Value: true
+        cmm_platform_link:
+          Value: true
         cnc_A_base:
           Value: true
-        cnc_platform:
+        cnc_B_base:
           Value: true
         cnc_platform_link:
           Value: true
@@ -277,7 +283,7 @@ Visualization Manager:
           Value: true
         conveyor_3:
           Value: true
-        conveyor_4:
+        ee_link:
           Value: true
         link_1:
           Value: true
@@ -293,7 +299,11 @@ Visualization Manager:
           Value: true
         tool0:
           Value: true
+        ur_base_link:
+          Value: true
         world_frame:
+          Value: true
+        wrist_3_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -304,20 +314,96 @@ Visualization Manager:
         world_frame:
           cmm_A_base:
             {}
+          cmm_platform_link:
+            ur_base_link:
+              {}
           cnc_A_base:
             {}
-          cnc_platform_link:
+          cnc_B_base:
             {}
+          cnc_platform_link:
+            base_link:
+              base:
+                {}
+              link_1:
+                link_2:
+                  link_3:
+                    link_4:
+                      link_5:
+                        link_6:
+                          {}
           conveyor_1:
             {}
           conveyor_2:
             {}
           conveyor_3:
             {}
-          conveyor_4:
-            {}
       Update Interval: 0
       Value: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ee_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        forearm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        shoulder_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tool0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        upper_arm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wrist_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wrist_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wrist_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: ur/robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
   Enabled: true
   Global Options:
     Background Color: 60; 60; 60
@@ -334,25 +420,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.23377132
+      Distance: 7.71493053
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.0666769296
-        Y: -0.0625672713
+        X: -2.10602093
+        Y: -0.0613546371
         Z: -0.291665316
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.879797339
+      Pitch: 0.634796441
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 4.70679855
+      Yaw: 4.5717907
     Saved: ~
 Window Geometry:
   Displays:
