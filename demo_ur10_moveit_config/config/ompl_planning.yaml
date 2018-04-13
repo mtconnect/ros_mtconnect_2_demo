@@ -145,5 +145,5 @@ manipulator:
     - LazyPRMstarkConfigDefault
     - SPARSkConfigDefault
     - SPARStwokConfigDefault
-  projection_evaluator: joints(abb_joint_1,abb_joint_2)
+  projection_evaluator: joints(ur_shoulder_pan_joint,ur_shoulder_lift_joint)
   longest_valid_segment_fraction: 0.005

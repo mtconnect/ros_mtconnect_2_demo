@@ -1,11 +1,10 @@
 moveit_setup_assistant_config:
   URDF:
     package: ceccrebot_demo_support
-    relative_path: urdf/abb_irb2400_robot.urdf.xacro
-    xacro_args: "--inorder "
+    relative_path: urdf/ur10_robot.urdf.xacro
   SRDF:
-    relative_path: config/abb_irb2400.srdf
+    relative_path: config/ur10.srdf
   CONFIG:
     author_name: Josh Langsfeld
     author_email: josh.langsfeld@swri.org
-    generated_timestamp: 1523654266
+    generated_timestamp: 1523632221
