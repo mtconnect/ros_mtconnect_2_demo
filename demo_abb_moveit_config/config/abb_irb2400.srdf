@@ -9,96 +9,32 @@
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
-    <group name="arm">
-        <chain base_link="base_link" tip_link="tool0" />
+    <group name="manipulator">
+        <chain base_link="abb_base_link" tip_link="abb_tool0" />
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="allzeros" group="arm">
-        <joint name="joint_1" value="0" />
-        <joint name="joint_2" value="0" />
-        <joint name="joint_3" value="0" />
-        <joint name="joint_4" value="0" />
-        <joint name="joint_5" value="0" />
-        <joint name="joint_6" value="0" />
-    </group_state>
-    <group_state name="pick" group="arm">
-        <joint name="joint_1" value="1.57" />
-        <joint name="joint_2" value="0" />
-        <joint name="joint_3" value="0" />
-        <joint name="joint_4" value="0" />
-        <joint name="joint_5" value="0" />
-        <joint name="joint_6" value="0" />
-    </group_state>
-    <group_state name="place" group="arm">
-        <joint name="joint_1" value="0" />
-        <joint name="joint_2" value="0" />
-        <joint name="joint_3" value="0" />
-        <joint name="joint_4" value="0" />
-        <joint name="joint_5" value="0" />
-        <joint name="joint_6" value="0" />
-    </group_state>
-    <group_state name="cnc" group="arm">
-        <joint name="joint_1" value="1.52" />
-        <joint name="joint_2" value="1.00" />
-        <joint name="joint_3" value="-0.319" />
-        <joint name="joint_4" value="-0.071" />
-        <joint name="joint_5" value="0.882" />
-        <joint name="joint_6" value="1.439" />
-    </group_state>
-    <group_state name="cnc_wpt" group="arm">
-        <joint name="joint_1" value="1.473" />
-        <joint name="joint_2" value="0.186" />
-        <joint name="joint_3" value="0.276" />
-        <joint name="joint_4" value="-0.061" />
-        <joint name="joint_5" value="1.098" />
-        <joint name="joint_6" value="1.375" />
-    </group_state>
-    <group_state name="cmm" group="arm">
-        <joint name="joint_1" value="-1.404" />
-        <joint name="joint_2" value="1.156" />
-        <joint name="joint_3" value="-0.791" />
-        <joint name="joint_4" value="0.059" />
-        <joint name="joint_5" value="1.201" />
-        <joint name="joint_6" value="0.181" />
-    </group_state>
-    <group_state name="cmm_wpt" group="arm">
-        <joint name="joint_1" value="-1.354" />
-        <joint name="joint_2" value="0.344" />
-        <joint name="joint_3" value="-0.093" />
-        <joint name="joint_4" value="0.057" />
-        <joint name="joint_5" value="1.312" />
-        <joint name="joint_6" value="0.238" />
-    </group_state>
-    <group_state name="conv_in" group="arm">
-        <joint name="joint_1" value="0.0" />
-        <joint name="joint_2" value="1.311" />
-        <joint name="joint_3" value="-0.647" />
-        <joint name="joint_4" value="0.006" />
-        <joint name="joint_5" value="0.851" />
-        <joint name="joint_6" value="0.000" />
-    </group_state>
-    <group_state name="conv_out" group="arm">
-        <joint name="joint_1" value="-3.067" />
-        <joint name="joint_2" value="1.094" />
-        <joint name="joint_3" value="-0.369" />
-        <joint name="joint_4" value="-0.000" />
-        <joint name="joint_5" value="0.902" />
-        <joint name="joint_6" value="-1.549" />
+    <group_state name="allzeros" group="manipulator">
+        <joint name="abb_joint_1" value="0" />
+        <joint name="abb_joint_2" value="0" />
+        <joint name="abb_joint_3" value="0" />
+        <joint name="abb_joint_4" value="0" />
+        <joint name="abb_joint_5" value="0" />
+        <joint name="abb_joint_6" value="0" />
     </group_state>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="base_link" link2="link_1" reason="Adjacent" />
-    <disable_collisions link1="base_link" link2="link_2" reason="Never" />
-    <disable_collisions link1="base_link" link2="link_3" reason="Never" />
-    <disable_collisions link1="link_1" link2="link_2" reason="Adjacent" />
-    <disable_collisions link1="link_1" link2="link_3" reason="Never" />
-    <disable_collisions link1="link_2" link2="link_3" reason="Adjacent" />
-    <disable_collisions link1="link_2" link2="link_4" reason="Never" />
-    <disable_collisions link1="link_2" link2="link_5" reason="Never" />
-    <disable_collisions link1="link_2" link2="link_6" reason="Never" />
-    <disable_collisions link1="link_3" link2="link_4" reason="Adjacent" />
-    <disable_collisions link1="link_3" link2="link_5" reason="Never" />
-    <disable_collisions link1="link_3" link2="link_6" reason="Never" />
-    <disable_collisions link1="link_4" link2="link_5" reason="Adjacent" />
-    <disable_collisions link1="link_4" link2="link_6" reason="Default" />
-    <disable_collisions link1="link_5" link2="link_6" reason="Adjacent" />
+    <disable_collisions link1="abb_base_link" link2="abb_link_1" reason="Adjacent" />
+    <disable_collisions link1="abb_base_link" link2="abb_link_2" reason="Never" />
+    <disable_collisions link1="abb_base_link" link2="abb_link_3" reason="Never" />
+    <disable_collisions link1="abb_link_1" link2="abb_link_2" reason="Adjacent" />
+    <disable_collisions link1="abb_link_1" link2="abb_link_3" reason="Never" />
+    <disable_collisions link1="abb_link_2" link2="abb_link_3" reason="Adjacent" />
+    <disable_collisions link1="abb_link_2" link2="abb_link_4" reason="Never" />
+    <disable_collisions link1="abb_link_2" link2="abb_link_5" reason="Never" />
+    <disable_collisions link1="abb_link_2" link2="abb_link_6" reason="Never" />
+    <disable_collisions link1="abb_link_3" link2="abb_link_4" reason="Adjacent" />
+    <disable_collisions link1="abb_link_3" link2="abb_link_5" reason="Never" />
+    <disable_collisions link1="abb_link_3" link2="abb_link_6" reason="Never" />
+    <disable_collisions link1="abb_link_4" link2="abb_link_5" reason="Adjacent" />
+    <disable_collisions link1="abb_link_4" link2="abb_link_6" reason="Default" />
+    <disable_collisions link1="abb_link_5" link2="abb_link_6" reason="Adjacent" />
 </robot>
