@@ -22,7 +22,15 @@ static const std::string MTCONNECT_WORK_ACTION = "work";
 
 bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg)
 {
-  return true;
+  nh.param<std::string>("world_frame_id", cfg.world_frame_id, cfg.world_frame_id);
+  nh.param<std::string>("arm_group_name", cfg.arm_group_name, cfg.arm_group_name);
+  nh.param<std::string>("wrist_link_name", cfg.wrist_link_name, cfg.wrist_link_name);
+  nh.param<std::string>("motion_plan_service", cfg.motion_plan_service, cfg.motion_plan_service);
+  nh.param<std::string>("marker_topic", cfg.marker_topic, cfg.marker_topic);
+  nh.param<std::string>("grasp_action_name", cfg.grasp_action_name, cfg.grasp_action_name);
+  nh.param<double>("gripper_effort", cfg.gripper_effort, cfg.gripper_effort);
+  nh.param<double>("gripper_close_position", cfg.gripper_close_position, cfg.gripper_close_position);
+  nh.param<double>("gripper_open_position", cfg.gripper_open_position, cfg.gripper_open_position);
 }
 
 ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
