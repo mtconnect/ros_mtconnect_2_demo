@@ -6,7 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
       Splitter Ratio: 0.517064989
-    Tree Height: 246
+    Tree Height: 491
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -63,46 +63,46 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          base:
+          abb_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_1:
+          abb_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_2:
+          abb_link_1:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_3:
+          abb_link_2:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_4:
+          abb_link_3:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_5:
+          abb_link_4:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_6:
+          abb_link_5:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          tool0:
+          abb_link_6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          abb_tool0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -128,7 +128,7 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
-        Planning Group: arm
+        Planning Group: manipulator
         Query Goal State: true
         Query Start State: false
         Show Workspace: false
@@ -151,46 +151,46 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          base:
+          abb_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_1:
+          abb_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_2:
+          abb_link_1:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_3:
+          abb_link_2:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_4:
+          abb_link_3:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_5:
+          abb_link_4:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link_6:
+          abb_link_5:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          tool0:
+          abb_link_6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          abb_tool0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -263,9 +263,23 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base:
+        abb_base:
           Value: true
-        base_link:
+        abb_base_link:
+          Value: true
+        abb_link_1:
+          Value: true
+        abb_link_2:
+          Value: true
+        abb_link_3:
+          Value: true
+        abb_link_4:
+          Value: true
+        abb_link_5:
+          Value: true
+        abb_link_6:
+          Value: true
+        abb_tool0:
           Value: true
         cmm_A_base:
           Value: true
@@ -283,27 +297,27 @@ Visualization Manager:
           Value: true
         conveyor_3:
           Value: true
-        ee_link:
-          Value: true
-        link_1:
-          Value: true
-        link_2:
-          Value: true
-        link_3:
-          Value: true
-        link_4:
-          Value: true
-        link_5:
-          Value: true
-        link_6:
-          Value: true
-        tool0:
+        ur_base:
           Value: true
         ur_base_link:
           Value: true
-        world_frame:
+        ur_ee_link:
           Value: true
-        wrist_3_link:
+        ur_forearm_link:
+          Value: true
+        ur_shoulder_link:
+          Value: true
+        ur_tool0:
+          Value: true
+        ur_upper_arm_link:
+          Value: true
+        ur_wrist_1_link:
+          Value: true
+        ur_wrist_2_link:
+          Value: true
+        ur_wrist_3_link:
+          Value: true
+        world_frame:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -316,22 +330,34 @@ Visualization Manager:
             {}
           cmm_platform_link:
             ur_base_link:
-              {}
+              ur_base:
+                {}
+              ur_shoulder_link:
+                ur_upper_arm_link:
+                  ur_forearm_link:
+                    ur_wrist_1_link:
+                      ur_wrist_2_link:
+                        ur_wrist_3_link:
+                          ur_ee_link:
+                            {}
+                          ur_tool0:
+                            {}
           cnc_A_base:
             {}
           cnc_B_base:
             {}
           cnc_platform_link:
-            base_link:
-              base:
+            abb_base_link:
+              abb_base:
                 {}
-              link_1:
-                link_2:
-                  link_3:
-                    link_4:
-                      link_5:
-                        link_6:
-                          {}
+              abb_link_1:
+                abb_link_2:
+                  abb_link_3:
+                    abb_link_4:
+                      abb_link_5:
+                        abb_link_6:
+                          abb_tool0:
+                            {}
           conveyor_1:
             {}
           conveyor_2:
@@ -350,50 +376,50 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base:
+        ur_base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ee_link:
+        ur_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        forearm_link:
+        ur_ee_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_link:
+        ur_forearm_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        tool0:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        upper_arm_link:
+        ur_shoulder_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        wrist_1_link:
+        ur_tool0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        ur_upper_arm_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        wrist_2_link:
+        ur_wrist_1_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        wrist_3_link:
+        ur_wrist_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ur_wrist_3_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -404,6 +430,17 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visuals
+      Name: Marker
+      Namespaces:
+        abb: true
+        cnc1: true
+        cnc2: true
+        ur: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 60; 60; 60
@@ -420,30 +457,30 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.71493053
+      Distance: 9.51244926
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -2.10602093
-        Y: -0.0613546371
-        Z: -0.291665316
+        X: -0.0148684792
+        Y: 0.102305003
+        Z: -0.284664124
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.634796441
+      Pitch: 0.689797223
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 4.5717907
+      Yaw: 4.4268055
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: true
-  Height: 1028
+  Height: 1176
   Help:
     collapsed: false
   Hide Left Dock: true
@@ -452,9 +489,9 @@ Window Geometry:
     collapsed: true
   MotionPlanning - Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000002b8000003befc0200000006fb000000100044006900730070006c00610079007300000000280000018b000000d700fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001b90000022d000001cc00fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000257000001790000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00ffffff000000010000015c00000452fc0200000001fb0000000a00560069006500770073000000002800000452000000ad00ffffff00000640000003be00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000002b800000452fc0200000006fb000000100044006900730070006c006100790073000000002800000280000000d700fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000002ae000001cc000001cc00fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000257000001790000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00ffffff000000010000015c00000452fc0200000001fb0000000a00560069006500770073000000002800000452000000ad00ffffff000006400000045200000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: true
   Width: 1600
-  X: 320
+  X: 0
   Y: 24

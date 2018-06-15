@@ -29,10 +29,12 @@ limitations under the License.
 #include <tf/transform_broadcaster.h>
 #include <tf_conversions/tf_eigen.h>
 #include <mtconnect_bridge/DeviceWorkAction.h>
+#include <xmlrpcpp/XmlRpcValue.h>
 
 typedef actionlib::SimpleActionClient<control_msgs::GripperCommandAction> GraspActionClient;
 typedef std::shared_ptr<GraspActionClient> GraspActionClientPtr;
 typedef std::shared_ptr<moveit::planning_interface::MoveGroupInterface> MoveGroupPtr;
+typedef std::map<std::string, double> JointPose;
 
 namespace ceccrebot_demo
 {
@@ -51,6 +53,7 @@ struct Config
 };
 
 bool loadConfig(ros::NodeHandle &nh, Config &cfg);
+void loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, JointPose> &robot_poses);
 
 class Demo
 {
@@ -99,6 +102,8 @@ protected:
   ros::ServiceClient motion_plan_client_;
   GraspActionClientPtr grasp_action_client_ptr_;
   MoveGroupPtr move_group_ptr_;
+
+  std::map<std::string, JointPose> robot_poses_;
 
   tf::TransformBroadcaster tf_broadcaster_;
   tf::TransformListener tf_listener_;
