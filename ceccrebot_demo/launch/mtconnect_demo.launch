@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 <launch>
-  <!--
-  <node name="mtconnect_demo" pkg="ceccrebot_demo" type="mtconnect_demo.py">
-    <rosparam command="load" file="$(find ceccrebot_demo)/config/mtconnect.yaml"/>
-  </node>
-  -->
   <group ns="abb">
-    <node name="ceccrebot_demo_node" pkg="ceccrebot_demo" type="ceccrebot_demo_node">
+    <node name="mtconnect_demo" pkg="ceccrebot_demo" type="mtconnect_demo.py" output="screen">
+      <rosparam command="load" file="$(find ceccrebot_demo)/config/mtconnect.yaml"/>
+    </node>
+    <node name="ceccrebot_demo_node" pkg="ceccrebot_demo" type="ceccrebot_demo_node" output="screen">
       <rosparam command="load" file="$(find ceccrebot_demo)/config/ros.yaml"/>
+      <rosparam param="poses" command="load" file="$(find ceccrebot_demo)/config/robot_poses.yaml"/>
     </node>
   </group>
 </launch>

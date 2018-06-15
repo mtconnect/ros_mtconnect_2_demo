@@ -17,12 +17,47 @@ limitations under the License.
 
 #include <moveit/kinematic_constraints/utils.h>
 #include <moveit_msgs/GetMotionPlan.h>
+#include <xmlrpcpp/XmlRpcException.h>
 
 static const std::string MTCONNECT_WORK_ACTION = "work";
 
 bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg)
 {
-  return true;
+  nh.param<std::string>("world_frame_id", cfg.world_frame_id, cfg.world_frame_id);
+  nh.param<std::string>("arm_group_name", cfg.arm_group_name, cfg.arm_group_name);
+  nh.param<std::string>("wrist_link_name", cfg.wrist_link_name, cfg.wrist_link_name);
+  nh.param<std::string>("motion_plan_service", cfg.motion_plan_service, cfg.motion_plan_service);
+  nh.param<std::string>("marker_topic", cfg.marker_topic, cfg.marker_topic);
+  nh.param<std::string>("grasp_action_name", cfg.grasp_action_name, cfg.grasp_action_name);
+  nh.param<double>("gripper_effort", cfg.gripper_effort, cfg.gripper_effort);
+  nh.param<double>("gripper_close_position", cfg.gripper_close_position, cfg.gripper_close_position);
+  nh.param<double>("gripper_open_position", cfg.gripper_open_position, cfg.gripper_open_position);
+}
+
+void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, JointPose> &robot_poses)
+{
+  try
+  {
+    for (auto it = param.begin(); it != param.end(); ++it)
+    {
+      std::string pose_name = it->first;
+      XmlRpc::XmlRpcValue pose_info = it->second;
+      XmlRpc::XmlRpcValue joint_names = pose_info["name"];
+      XmlRpc::XmlRpcValue joint_values = pose_info["position"];
+      if (joint_names.size() != joint_values.size())
+        throw std::runtime_error("pose '" + pose_name + "': mismatch with number of joints");
+      std::map<std::string, double> pose;
+      for (int i=0; i < joint_names.size(); ++i)
+      {
+        pose[joint_names[i]] = joint_values[i];
+      }
+      robot_poses[pose_name] = pose;
+    }
+  }
+  catch (XmlRpc::XmlRpcException &ex)
+  {
+    throw std::runtime_error("XmlRpc error: " + ex.getMessage());
+  }
 }
 
 ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
@@ -38,6 +73,11 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   {
     throw std::runtime_error("Failed to load parameters");
   }
+
+  XmlRpc::XmlRpcValue poses_param;
+  if (! nhp.getParam("poses", poses_param))
+    throw std::runtime_error("Required parameter 'poses' not found");
+  loadPoses(poses_param, robot_poses_);
 
   // moveit interface
   move_group_ptr_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(cfg_.arm_group_name);
@@ -74,7 +114,7 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
 void ceccrebot_demo::Demo::run()
 {
   // move to a "clear" position
-  go_to_pose("allzeros");
+  go_to_pose("all_zeros");
 
   while (ros::ok())
   {
@@ -107,6 +147,7 @@ void ceccrebot_demo::Demo::work_dispatch(mtconnect_bridge::DeviceWorkGoal::Const
   //send feedback: performing work
   if (work->type == "move")
   {
+    ROS_INFO_STREAM("Received work: move to " << work->data);
     go_to_pose(work->data);
   }
   //send completion
@@ -114,7 +155,10 @@ void ceccrebot_demo::Demo::work_dispatch(mtconnect_bridge::DeviceWorkGoal::Const
 
 void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
 {
-  move_group_ptr_->setNamedTarget(pose_name);
+  if (robot_poses_.count(pose_name) == 0)
+    throw std::runtime_error("Move target '" + pose_name + "' is unknown");
+
+  move_group_ptr_->setJointValueTarget(robot_poses_[pose_name]);
   move_group_ptr_->setPlanningTime(5.0);
 
   bool success = (bool) move_group_ptr_->move();
