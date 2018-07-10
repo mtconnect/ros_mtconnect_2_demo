@@ -41,7 +41,7 @@
 
   <!-- CMM -->
   <xacro:cmm id="A" parent_link="${root_frame_id}">
-    <origin xyz="-2.5 2.5 0.0" />
+    <origin xyz="-1.5 2.0 0.85" rpy="0 0 3.1415"/>
   </xacro:cmm>
 
   <xacro:conveyor id="1" parent_link="${root_frame_id}">
