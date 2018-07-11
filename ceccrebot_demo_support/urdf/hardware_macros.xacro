@@ -133,4 +133,30 @@
       <child link="conveyor_${id}"/>
     </joint>
   </xacro:macro>
+
+  <!-- Demo Part-->
+  <xacro:macro name="part" params="id parent_link *location">
+    <link name="part_${id}">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/AMTDemoPart.stl" scale = "0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      </visual>
+      <collision name="part_${id}_coll">
+        <geometry>
+          <box size="0.1 0.2 0.3"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0"/>
+      </collision>
+    </link>
+
+    <joint name="part_${id}" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="${parent_link}"/>
+      <child link="part_${id}"/>
+    </joint>
+  </xacro:macro>
+
+
 </robot>

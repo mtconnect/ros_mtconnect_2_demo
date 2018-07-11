@@ -33,16 +33,9 @@
     <origin xyz="-0.5 -2.2 0.85" rpy="0 0 0"/>
   </xacro:cmm>
 
-  <xacro:conveyor id="1" parent_link="${root_frame_id}">
-    <origin xyz="1.75 0.0 0.0" />
-  </xacro:conveyor>
-  <xacro:conveyor id="2" parent_link="${root_frame_id}">
-    <origin xyz="3.25 0.0 0.0" />
-  </xacro:conveyor>
-  <xacro:conveyor id="3" parent_link="${root_frame_id}">
-    <origin xyz="-1.75 0.0 0.0" />
-  </xacro:conveyor>
-  <xacro:conveyor id="4" parent_link="${root_frame_id}">
-    <origin xyz="-3.25 0.0 0.0" />
-  </xacro:conveyor>
+  <!-- Demo Parts -->
+  <xacro:part id="1" parent_link="${root_frame_id}">
+    <origin xyz="0 -1.25 0.95 " rpy="0 0 0"/>
+  </xacro:part>
+
 </robot>
