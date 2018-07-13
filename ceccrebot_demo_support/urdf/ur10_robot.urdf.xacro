@@ -6,6 +6,19 @@
   <!-- ur10 -->
   <xacro:include filename="$(find ur_description)/urdf/ur10.urdf.xacro" />
 
+
   <!-- arm -->
   <xacro:ur10_robot prefix="ur_" joint_limited="false"/>
+
+
+  <!-- Robotiq Gripper -->
+  <xacro:include filename="$(find robotiq_s_model_visualization)/cfg/s-model_mesh_macro.xacro" />
+
+  <xacro:s-model_mesh  prefix=""/>
+  <joint name="EEjoint" type ="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.160"/>
+    <parent link="ur_tool0"/>
+    <child link="palm"/>
+  </joint>
+
 </robot>
