@@ -37,7 +37,7 @@ Visualization Manager:
       Value: true
     - Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
-      Move Group Namespace: abb
+      Move Group Namespace: ur
       MoveIt_Goal_Tolerance: 0
       MoveIt_Planning_Attempts: 10
       MoveIt_Planning_Time: 5
@@ -63,46 +63,46 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          abb_base:
+          ur_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          abb_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          abb_link_1:
+          ur_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_2:
+          ur_link_1:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_3:
+          ur_link_2:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_4:
+          ur_link_3:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_5:
+          ur_link_4:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_6:
+          ur_link_5:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_tool0:
+          ur_link_6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_tool0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -135,7 +135,7 @@ Visualization Manager:
         Start State Alpha: 1
         Start State Color: 0; 255; 0
       Planning Scene Topic: /move_group/monitored_planning_scene
-      Robot Description: abb/robot_description
+      Robot Description: ur/robot_description
       Scene Geometry:
         Scene Alpha: 0.899999976
         Scene Color: 50; 230; 50
@@ -151,46 +151,46 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          abb_base:
+          ur_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          abb_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          abb_link_1:
+          ur_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_2:
+          ur_link_1:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_3:
+          ur_link_2:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_4:
+          ur_link_3:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_5:
+          ur_link_4:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_link_6:
+          ur_link_5:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          abb_tool0:
+          ur_link_6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_tool0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -258,23 +258,23 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        abb_base:
+        ur_base:
           Value: true
-        abb_base_link:
+        ur_base_link:
           Value: true
-        abb_link_1:
+        ur_link_1:
           Value: true
-        abb_link_2:
+        ur_link_2:
           Value: true
-        abb_link_3:
+        ur_link_3:
           Value: true
-        abb_link_4:
+        ur_link_4:
           Value: true
-        abb_link_5:
+        ur_link_5:
           Value: true
-        abb_link_6:
+        ur_link_6:
           Value: true
-        abb_tool0:
+        ur_tool0:
           Value: true
         cmm_A_base:
           Value: true
@@ -304,16 +304,16 @@ Visualization Manager:
           cnc_A_base:
             {}
           cnc_platform_link:
-            abb_base_link:
-              abb_base:
+            ur_base_link:
+              ur_base:
                 {}
-              abb_link_1:
-                abb_link_2:
-                  abb_link_3:
-                    abb_link_4:
-                      abb_link_5:
-                        abb_link_6:
-                          abb_tool0:
+              ur_link_1:
+                ur_link_2:
+                  ur_link_3:
+                    ur_link_4:
+                      ur_link_5:
+                        ur_link_6:
+                          ur_tool0:
                             {}
           conveyor_1:
             {}
@@ -335,51 +335,51 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        abb_base:
+        ur_base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        abb_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        abb_link_1:
+        ur_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        abb_link_2:
+        ur_link_1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        abb_link_3:
+        ur_link_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        abb_link_4:
+        ur_link_3:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        abb_link_5:
+        ur_link_4:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        abb_link_6:
+        ur_link_5:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        abb_tool0:
+        ur_link_6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ur_tool0:
           Alpha: 1
           Show Axes: false
           Show Trail: false
       Name: RobotModel
-      Robot Description: abb/robot_description
+      Robot Description: ur/robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true

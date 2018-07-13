@@ -12,16 +12,15 @@
       <remap from="robot_description" to="env_description"/>
   </node>
 
-  <!-- Robot descriptions and planning nodes -->
-  <group ns="abb">
-    <include file="$(find ceccrebot_demo_support)/launch/abb_irb2400_setup.launch">
+  <group ns="ur">
+    <include file="$(find ceccrebot_demo_support)/launch/ur10_setup.launch">
       <arg name="sim_robot" value="$(arg sim_robot)"/>
       <arg name="sim_gripper" value="$(arg sim_gripper)"/>
     </include>
     <!-- place robot in scene -->
     <!-- platform link defined in the env_description xacro file -->
     <node name="robot_base_publisher" pkg="tf" type="static_transform_publisher"
-          args="0 0 0 0 0 0 cnc_platform_link abb_base_link 20" />
+          args="0 0 0 0 0 0 cnc_platform_link ur_base_link 20" />
   </group>
 
   <!--

@@ -53,7 +53,55 @@
         <origin xyz="1.625 0.8 1.45"/>
       </collision>
     </link>
+    <joint name="cnc_${id}_joint" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="${parent_link}"/>
+      <child link="cnc_${id}_base"/>
+    </joint>
+  </xacro:macro>
 
+  <!-- VM5i CNC -->
+  <xacro:macro name="cnc_VM5i" params="id parent_link *location">
+    <link name="cnc_${id}_base">
+      <visual>
+        <origin xyz="0.0 1.75 0.0" rpy="1.571 0 0"/>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/VM5i_DoorsOpen.stl" scale = "0.001 0.001 0.001"/>
+        </geometry>
+        <material name="light_gray"/>
+      </visual>
+
+      <collision name="cnc_${id}_base">
+        <geometry>
+          <box size="1.6 1.8 0.8"/>
+        </geometry>
+        <origin xyz="0.8 0.9 0.4" />
+      </collision>
+      <collision name="cnc_${id}_back">
+        <geometry>
+          <box size="1.60 1.25 2.0"/>
+        </geometry>
+        <origin xyz="0.8 1.05 1.0" />
+      </collision>
+      <collision name="cnc_${id}_right_wall">
+        <geometry>
+          <box size="0.65 1.7 2.0"/>
+        </geometry>
+        <origin xyz="1.32 0.85 1.0" />
+      </collision>
+      <collision name="cnc_${id}_left_wall">
+        <geometry>
+          <box size="0.4 1.7 2.0"/>
+        </geometry>
+        <origin xyz="0.2 0.85 1.0" />
+      </collision>
+      <collision name="cnc_${id}_computer">
+        <geometry>
+          <box size="0.5 1.2 0.8"/>
+        </geometry>
+        <origin xyz="1.4 -0.6 1.5"/>
+      </collision>
+    </link>
     <joint name="cnc_${id}_joint" type ="fixed">
       <xacro:insert_block name="location" />
       <parent link="${parent_link}"/>
@@ -66,33 +114,40 @@
     <link name="cmm_${id}_base">
       <visual>
         <geometry>
-          <mesh filename="package://ceccrebot_demo_support/meshes/CMM_color.dae"/>
+          <mesh filename="package://ceccrebot_demo_support/meshes/Hexagon-MI-TIGOSF-CADModelwHP-S-X1.stl" scale = "0.001 0.001 0.001" />
         </geometry>
         <material name="light_gray"/>
       </visual>
+
       <collision name="cmm_${id}_base">
         <geometry>
-          <box size="2.2 1.3 1.0"/>
+          <box size=".8 1.25 0.95"/>
         </geometry>
-        <origin xyz="0.0 -0.65 0.5"/>
+        <origin xyz="0.3 0.6 -.4"/>
       </collision>
       <collision name="cmm_${id}_probe_area">
         <geometry>
-          <box size="1.2 0.5 1.2"/>
+          <box size=".25 .25 1.3"/>
         </geometry>
-        <origin xyz="0.5 -0.4 2.15"/>
+        <origin xyz="0.35 0.675 0.95"/>
       </collision>
-      <collision name="cmm_${id}_right_wall">
+      <collision name="cmm_${id}_back_wall">
         <geometry>
-          <box size="0.4 1.5 1.0"/>
+          <box size="1.25 0.5 1.0"/>
         </geometry>
-        <origin xyz="1.0 -0.7 1.5"/>
+        <origin xyz=".5 .2 0.5"/>
       </collision>
-      <collision name="cmm_${id}_left_wall">
+      <collision name="cmm_${id}_probe_gantry">
         <geometry>
-          <box size="0.3 0.4 1.0"/>
+          <box size="0.35 1.4 0.25"/>
         </geometry>
-        <origin xyz="-0.2 -0.4 1.5"/>
+        <origin xyz="0.4 0.475 0.75"/>
+      </collision>      
+      <collision name="cmm_${id}_computer">
+        <geometry>
+          <box size="0.5 0.5 1.0"/>
+        </geometry>
+        <origin xyz="-0.5 0.9 0.1"/>
       </collision>
     </link>
 
@@ -126,4 +181,30 @@
       <child link="conveyor_${id}"/>
     </joint>
   </xacro:macro>
+
+  <!-- Demo Part-->
+  <xacro:macro name="part" params="id parent_link *location">
+    <link name="part_${id}">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/AMTDemoPart.stl" scale = "0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      </visual>
+      <collision name="part_${id}_coll">
+        <geometry>
+          <box size="0.1 0.2 0.3"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0"/>
+      </collision>
+    </link>
+
+    <joint name="part_${id}" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="${parent_link}"/>
+      <child link="part_${id}"/>
+    </joint>
+  </xacro:macro>
+
+
 </robot>
