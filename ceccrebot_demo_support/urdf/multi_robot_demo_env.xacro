@@ -5,7 +5,7 @@
   <xacro:include filename="$(find ceccrebot_demo_support)/urdf/materials.xacro"/>
 
   <!-- parameters -->
-  <xacro:property name="platform_thickness" value="0.5"/>
+  <xacro:property name="platform_thickness" value="1.0414"/>
   <xacro:property name="root_frame_id" value="world_frame"/>
 
   <link name="${root_frame_id}"/>
