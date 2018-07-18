@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="activate" default="True" />
+  <arg name="slave_number" default="1" />
+  <arg name="ifname" default="enx00051bb16fd7"/>
+
+  <param name="ifname" value="$(arg ifname)"/>
+
+  <node pkg="robotiq_s_model_control" type="s_model_ethercat_node" name="robotiq_gripper" output="screen">
+      <param name="activate" type="bool" value="$(arg activate)" />
+      <param name="slave_number" type="int" value="$(arg slave_number)"/>
+  </node>
+
+  <node pkg="ceccrebot_demo" type="gripper_control_node" name="gripper_control">
+    <remap from="input" to="robotiq_gripper/input"/>
+    <remap from="output" to="robotiq_gripper/output"/>
+  </node>
+</launch>
