@@ -17,6 +17,7 @@ limitations under the License.
 
 #include <moveit/kinematic_constraints/utils.h>
 #include <moveit_msgs/GetMotionPlan.h>
+#include <std_srvs/Trigger.h>
 #include <xmlrpcpp/XmlRpcException.h>
 
 static const std::string MTCONNECT_WORK_ACTION = "work";
@@ -29,23 +30,27 @@ bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg
   nh.param<std::string>("motion_plan_service", cfg.motion_plan_service, cfg.motion_plan_service);
   nh.param<std::string>("marker_topic", cfg.marker_topic, cfg.marker_topic);
   nh.param<std::string>("grasp_action_name", cfg.grasp_action_name, cfg.grasp_action_name);
-  nh.param<double>("gripper_effort", cfg.gripper_effort, cfg.gripper_effort);
-  nh.param<double>("gripper_close_position", cfg.gripper_close_position, cfg.gripper_close_position);
-  nh.param<double>("gripper_open_position", cfg.gripper_open_position, cfg.gripper_open_position);
+  return true;
 }
 
 void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, JointPose> &robot_poses)
 {
   try
   {
-    for (auto it = param.begin(); it != param.end(); ++it)
+    std::vector<std::string> joint_names;
+    XmlRpc::XmlRpcValue joints_param = param["joints"];
+    for (int i=0; i < joints_param.size(); ++i)
+    {
+      joint_names.push_back(joints_param[i]);
+    }
+    XmlRpc::XmlRpcValue positions_param = param["positions"];
+    for (auto it = positions_param.begin(); it != positions_param.end(); ++it)
     {
       std::string pose_name = it->first;
-      XmlRpc::XmlRpcValue pose_info = it->second;
-      XmlRpc::XmlRpcValue joint_names = pose_info["name"];
-      XmlRpc::XmlRpcValue joint_values = pose_info["position"];
+      XmlRpc::XmlRpcValue joint_values = it->second;
       if (joint_names.size() != joint_values.size())
-        throw std::runtime_error("pose '" + pose_name + "': mismatch with number of joints");
+        throw std::runtime_error(
+            "pose '" + pose_name + "': mismatch with number of joints, expected " + std::to_string(joint_names.size()));
       std::map<std::string, double> pose;
       for (int i=0; i < joint_names.size(); ++i)
       {
@@ -89,17 +94,8 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   // marker publisher (rviz visualization)
   marker_publisher_ = nh.advertise<visualization_msgs::Marker>(cfg_.marker_topic, 1);
 
-  // TODO
-  // grasp action client (vacuum gripper)
-  //grasp_action_client_ptr_ = GraspActionClientPtr(new GraspActionClient(cfg_.grasp_action_name, true));
-
-  // waiting to establish connections
-  /*
-  while(ros::ok() && ! grasp_action_client_ptr_->waitForServer(ros::Duration(2.0f)))
-  {
-    ROS_INFO_STREAM("Waiting for grasp action server: " << cfg_.grasp_action_name);
-  }
-  */
+  gripper_open_srv_ = nh.serviceClient<std_srvs::Trigger>("open");
+  gripper_close_srv_ = nh.serviceClient<std_srvs::Trigger>("close");
 
   if (! ros::ok())
     throw std::runtime_error("ROS has shutdown");
@@ -114,7 +110,7 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
 void ceccrebot_demo::Demo::run()
 {
   // move to a "clear" position
-  go_to_pose("all_zeros");
+  go_to_pose("home");
 
   while (ros::ok())
   {
@@ -150,7 +146,13 @@ void ceccrebot_demo::Demo::work_dispatch(mtconnect_bridge::DeviceWorkGoal::Const
     ROS_INFO_STREAM("Received work: move to " << work->data);
     go_to_pose(work->data);
   }
+  if (work->type == "gripper")
+  {
+    ROS_INFO_STREAM("Received work: command gripper to " << work->data);
+    cmd_gripper(work->data);
+  }
   //send completion
+  curr_work_ = nullptr;
 }
 
 void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
@@ -173,31 +175,36 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   }
 }
 
-void ceccrebot_demo::Demo::cmd_gripper(bool close)
+void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
 {
-  // set the corresponding gripper action in the "grasp_goal" object.
-  control_msgs::GripperCommandGoal grasp_goal;
-  grasp_goal.command.max_effort = cfg_.gripper_effort;
-  if (close)
-    grasp_goal.command.position = cfg_.gripper_close_position;
-  else
-    grasp_goal.command.position = cfg_.gripper_open_position;
-
-  //TODO
-  /*
-  grasp_action_client_ptr_->sendGoal(grasp_goal);
-  if (grasp_action_client_ptr_->waitForResult(ros::Duration(4.0f)))
+  if (cmd == "open")
   {
-    if (close)
-      ROS_INFO_STREAM("Gripper closed");
-    else
-      ROS_INFO_STREAM("Gripper opened");
+    std_srvs::Trigger srv_data;
+    if (! gripper_open_srv_.call(srv_data))
+    {
+      ROS_ERROR_STREAM("Gripper open failed for an unknown reason");
+    }
+    if (! srv_data.response.success)
+    {
+      ROS_ERROR_STREAM("Gripper open failed: " << srv_data.response.message);
+    }
+  }
+  else if (cmd == "close")
+  {
+    std_srvs::Trigger srv_data;
+    if (! gripper_open_srv_.call(srv_data))
+    {
+      ROS_ERROR_STREAM("Gripper close failed for an unknown reason");
+    }
+    if (! srv_data.response.success)
+    {
+      ROS_ERROR_STREAM("Gripper close failed: " << srv_data.response.message);
+    }
   }
   else
   {
-    throw std::runtime_error(std::string("Gripper failed to ") + (close ? "close" : "open"));
+    ROS_ERROR_STREAM("Unrecognized gripper command data: " << cmd);
   }
-  */
 }
 
 bool ceccrebot_demo::Demo::create_motion_plan(
@@ -267,7 +274,7 @@ void ceccrebot_demo::Demo::pick(const std::vector<geometry_msgs::PoseStamped>& p
 
 	    if(i == 1) //About to grab part
 	    {
-	      cmd_gripper(true);
+	      cmd_gripper("close");
 	    }
 	  }
 }
@@ -300,7 +307,7 @@ void ceccrebot_demo::Demo::place(const std::vector<geometry_msgs::PoseStamped>& 
 
     if(i == 1) //Part ready to be released
     {
-      cmd_gripper(false);
+      cmd_gripper("open");
     }
   }
 }

@@ -1,0 +1,16 @@
+joints:
+    - ur_elbow_joint
+    - ur_shoulder_lift_joint
+    - ur_shoulder_pan_joint
+    - ur_wrist_1_joint
+    - ur_wrist_2_joint
+    - ur_wrist_3_joint
+positions:
+    home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cnc_door: [1.58938, 1.17251, -0.25970, -0.01454, 0.59773, 0.02817]
+    cnc_pregrasp: [1.58938, 1.17251, -0.25970, -0.01454, 0.59773, 0.02817]
+    table_pregrasp: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    table_grasp: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cmm_pregrasp: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cmm_grasp: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    all_zeros: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
