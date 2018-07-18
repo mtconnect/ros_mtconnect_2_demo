@@ -6,7 +6,7 @@
   <arg name="gripper_ip" if="$(arg sim_gripper)"/>
 
   <param name="robot_description"
-    command="$(find xacro)/xacro --inorder $(find ceccrebot_demo_support)/urdf/ur10_robot.urdf.xacro"/>
+    command="$(find xacro)/xacro --inorder $(find ceccrebot_demo_support)/urdf/ur10_in_scene.urdf.xacro"/>
   <rosparam param="controller_joint_names" command="load"
             file="$(find ceccrebot_demo_support)/config/ur10_joint_names.yaml"/>
 
