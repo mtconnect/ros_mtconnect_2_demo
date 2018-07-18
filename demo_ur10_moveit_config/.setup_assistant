@@ -1,10 +1,11 @@
 moveit_setup_assistant_config:
   URDF:
     package: ceccrebot_demo_support
-    relative_path: urdf/ur10_robot.urdf.xacro
+    relative_path: urdf/ur10_in_scene.urdf.xacro
+    xacro_args: "--inorder "
   SRDF:
     relative_path: config/ur10.srdf
   CONFIG:
-    author_name: Josh Langsfeld
-    author_email: josh.langsfeld@swri.org
-    generated_timestamp: 1523632221
+    author_name: Matthew Powelson
+    author_email: matthew.powelson@swri.org
+    generated_timestamp: 1531852829

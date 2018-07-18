@@ -10,6 +10,12 @@
         </geometry>
         <material name="${material}"/>
       </visual>
+      <collision name="{name}_platform">
+        <geometry>
+          <box size="0.6 0.6 ${thickness}"/>
+        </geometry>
+        <origin xyz="0.0 0.0 -${thickness * 0.5}" rpy="0 0 0"/>
+      </collision>
     </link>
 
     <joint name="${name}_platform_joint" type ="fixed">
