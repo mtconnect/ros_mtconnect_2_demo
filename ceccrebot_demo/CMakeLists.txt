@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   moveit_msgs
   moveit_ros_planning_interface
+  robotiq_s_model_control
+  std_srvs
   tf
   xmlrpcpp
 )
@@ -145,6 +147,10 @@ add_executable(${PROJECT_NAME}_node
   src/demo.cpp
 )
 
+add_executable(gripper_control_node
+  src/nodes/gripper_cmd_node.cpp
+)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -157,6 +163,10 @@ add_executable(${PROJECT_NAME}_node
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(gripper_control_node
   ${catkin_LIBRARIES}
 )
 
