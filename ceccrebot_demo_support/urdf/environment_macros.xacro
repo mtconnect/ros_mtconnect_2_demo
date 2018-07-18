@@ -7,12 +7,18 @@
 
       <!-- parameters -->
       <xacro:property name="platform_thickness" value="1.0414"/>
+      <xacro:property name="table_height" value="1.0541"/>
 
       <link name="${root_frame_id}"/>
 
       <!-- Robot support -->
       <xacro:platform name="cnc" parent_link="${root_frame_id}" length="0.1" width="0.1" height="${platform_thickness}" material="orange">
         <origin xyz="0.0 0.0 ${platform_thickness}"/>
+      </xacro:platform>
+
+      <!-- Part table -->
+      <xacro:platform name="part_table" parent_link="${root_frame_id}" length="0.9144" width="0.762" height="${table_height}" material="light_gray">
+          <origin xyz="0.6858 0.4572 ${table_height}" rpy="0 0 1.5708"/>
       </xacro:platform>
 
       <!-- CNC -->
