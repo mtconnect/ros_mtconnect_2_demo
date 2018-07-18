@@ -11,7 +11,7 @@
       <link name="${root_frame_id}"/>
 
       <!-- Robot support -->
-      <xacro:platform name="cnc" parent_link="${root_frame_id}" thickness="${platform_thickness}" material="orange">
+      <xacro:platform name="cnc" parent_link="${root_frame_id}" length="0.1" width="0.1" height="${platform_thickness}" material="orange">
         <origin xyz="0.0 0.0 ${platform_thickness}"/>
       </xacro:platform>
 

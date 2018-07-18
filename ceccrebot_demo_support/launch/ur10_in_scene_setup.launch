@@ -1,9 +1,9 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <launch>
   <arg name="sim_robot" default="true"/>
   <arg name="sim_gripper" default="true"/>
-  <arg name="robot_ip" if="$(arg sim_robot)"/>
-  <arg name="gripper_ip" if="$(arg sim_gripper)"/>
+  <arg name="robot_ip" unless="$(arg sim_robot)"/>
+  <arg name="gripper_ip" unless="$(arg sim_gripper)"/>
 
   <param name="robot_description"
     command="$(find xacro)/xacro --inorder $(find ceccrebot_demo_support)/urdf/ur10_in_scene.urdf.xacro"/>
@@ -21,11 +21,23 @@
 
   <!-- Robot interfaces, real or simulated -->
   <group unless="$(arg sim_robot)">
+    <remap from="/follow_joint_trajectory/status" to="/joint_trajectory_action/status" />
+    <remap from="/follow_joint_trajectory/feedback" to="/joint_trajectory_action/feedback" />
+    <remap from="/follow_joint_trajectory/result" to="/joint_trajectory_action/result" />
+    <remap from="/follow_joint_trajectory/goal" to="/joint_trajectory_action/goal" />
+    <remap from="/follow_joint_trajectory/cancel" to="/joint_trajectory_action/cancel" />
+
+    <include file="$(find ur_modern_driver)/launch/ur_common.launch">
+      <arg name="prefix" value="ur_" />
+      <arg name="robot_ip" value="$(arg robot_ip)" />
+      <arg name="min_payload" value="1.0" />
+      <arg name="max_payload" value="5.0" />
+    </include>
   </group>
 
   <group if="$(arg sim_robot)">
     <include file="$(find industrial_robot_simulator)/launch/robot_interface_simulator.launch"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
   </group>
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 </launch>

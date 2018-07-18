@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Robot support -->
-  <xacro:macro name="platform" params="name parent_link thickness material *location">
+  <xacro:macro name="platform" params="name parent_link length width height material *location">
     <link name="${name}_platform_link">
       <visual>
-        <origin xyz="0.0 0.0 -${thickness * 0.5}" rpy="0 0 0"/>
+        <origin xyz="0.0 0.0 -${height * 0.5}" rpy="0 0 0"/>
         <geometry>
-          <box size="0.5 0.5 ${thickness}"/>
+          <box size="${length} ${width} ${height}"/>
         </geometry>
         <material name="${material}"/>
       </visual>
       <collision name="{name}_platform">
         <geometry>
-          <box size="0.6 0.6 ${thickness}"/>
+          <box size="${length} ${width} ${height}"/>
         </geometry>
-        <origin xyz="0.0 0.0 -${thickness * 0.5}" rpy="0 0 0"/>
+        <origin xyz="0.0 0.0 -${height * 0.5}" rpy="0 0 0"/>
       </collision>
     </link>
 
@@ -68,6 +68,9 @@
 
   <!-- VM5i CNC -->
   <xacro:macro name="cnc_VM5i" params="id parent_link *location">
+    <!-- Machine reference point in STL -->
+    <!-- x = right, y = up, z = out front door -->
+    <!-- x = -50.0, y = 1054.28, z = 207.0 -->
     <link name="cnc_${id}_base">
       <visual>
         <origin xyz="0.0 1.75 0.0" rpy="1.571 0 0"/>
@@ -148,7 +151,7 @@
           <box size="0.35 1.4 0.25"/>
         </geometry>
         <origin xyz="0.4 0.475 0.75"/>
-      </collision>      
+      </collision>
       <collision name="cmm_${id}_computer">
         <geometry>
           <box size="0.5 0.5 1.0"/>
