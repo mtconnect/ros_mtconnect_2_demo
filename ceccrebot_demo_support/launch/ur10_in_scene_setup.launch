@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="sim_robot" default="true"/>
-  <arg name="sim_gripper" default="true"/>
   <arg name="robot_ip" unless="$(arg sim_robot)"/>
-  <arg name="gripper_ip" unless="$(arg sim_gripper)"/>
 
   <param name="robot_description"
     command="$(find xacro)/xacro --inorder $(find ceccrebot_demo_support)/urdf/ur10_in_scene.urdf.xacro"/>
@@ -20,12 +18,13 @@
   </include>
 
   <!-- Robot interfaces, real or simulated -->
+
   <group unless="$(arg sim_robot)">
-    <remap from="/follow_joint_trajectory/status" to="/joint_trajectory_action/status" />
-    <remap from="/follow_joint_trajectory/feedback" to="/joint_trajectory_action/feedback" />
-    <remap from="/follow_joint_trajectory/result" to="/joint_trajectory_action/result" />
-    <remap from="/follow_joint_trajectory/goal" to="/joint_trajectory_action/goal" />
-    <remap from="/follow_joint_trajectory/cancel" to="/joint_trajectory_action/cancel" />
+    <remap from="follow_joint_trajectory/status" to="joint_trajectory_action/status" />
+    <remap from="follow_joint_trajectory/feedback" to="joint_trajectory_action/feedback" />
+    <remap from="follow_joint_trajectory/result" to="joint_trajectory_action/result" />
+    <remap from="follow_joint_trajectory/goal" to="joint_trajectory_action/goal" />
+    <remap from="follow_joint_trajectory/cancel" to="joint_trajectory_action/cancel" />
 
     <include file="$(find ur_modern_driver)/launch/ur_common.launch">
       <arg name="prefix" value="ur_" />
@@ -36,8 +35,14 @@
   </group>
 
   <group if="$(arg sim_robot)">
-    <include file="$(find industrial_robot_simulator)/launch/robot_interface_simulator.launch"/>
+    <rosparam param="initial_joint_state" command="load"
+              file="$(find ceccrebot_demo_support)/config/ur10_initial_joint_states.yaml"/>
+
+    <!-- industrial_robot_simulator: accepts robot commands and reports status -->
+    <node pkg="industrial_robot_simulator" type="industrial_robot_simulator" name="industrial_robot_simulator"/>
+    <!-- joint_trajectory_action: provides actionlib interface for high-level robot control -->
+    <node pkg="industrial_robot_client" type="joint_trajectory_action" name="joint_trajectory_action"/>
+
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
   </group>
-
 </launch>

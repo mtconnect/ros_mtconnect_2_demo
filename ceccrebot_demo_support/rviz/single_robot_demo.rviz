@@ -38,6 +38,8 @@ Visualization Manager:
     - Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
       Move Group Namespace: ur
+      MoveIt_Allow_Approximate_IK: false
+      MoveIt_Allow_External_Program: false
       MoveIt_Goal_Tolerance: 0
       MoveIt_Planning_Attempts: 10
       MoveIt_Planning_Time: 5
@@ -63,6 +65,51 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          cmm_A_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          cnc_A_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          palm:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          part_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          part_table_platform_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robot_platform_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           ur_base:
             Alpha: 1
             Show Axes: false
@@ -72,37 +119,46 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          ur_link_1:
+          ur_ee_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur_link_2:
+          ur_forearm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur_link_3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur_link_4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur_link_5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur_link_6:
+          ur_shoulder_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
           ur_tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          ur_upper_arm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_wrist_1_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_wrist_2_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_wrist_3_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world_frame:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -134,7 +190,7 @@ Visualization Manager:
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
-      Planning Scene Topic: /move_group/monitored_planning_scene
+      Planning Scene Topic: ur/move_group/monitored_planning_scene
       Robot Description: ur/robot_description
       Scene Geometry:
         Scene Alpha: 0.899999976
@@ -151,6 +207,51 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          cmm_A_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          cnc_A_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          palm:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          part_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          part_table_platform_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robot_platform_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           ur_base:
             Alpha: 1
             Show Axes: false
@@ -160,32 +261,17 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          ur_link_1:
+          ur_ee_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur_link_2:
+          ur_forearm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur_link_3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur_link_4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur_link_5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur_link_6:
+          ur_shoulder_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -194,137 +280,48 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+          ur_upper_arm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_wrist_1_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_wrist_2_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ur_wrist_3_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
       Value: true
-    - Alpha: 1
-      Class: rviz/RobotModel
-      Collision Enabled: false
-      Enabled: true
-      Links:
-        All Links Enabled: true
-        Expand Joint Details: false
-        Expand Link Details: false
-        Expand Tree: false
-        Link Tree Style: Links in Alphabetic Order
-        cmm_A_base:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        cnc_A_base:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        cnc_platform_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        conveyor_1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        conveyor_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        conveyor_3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        conveyor_4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        world_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-      Name: Environment
-      Robot Description: env_description
-      TF Prefix: ""
-      Update Interval: 0
-      Value: true
-      Visual Enabled: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        ur_base:
-          Value: true
-        ur_base_link:
-          Value: true
-        ur_link_1:
-          Value: true
-        ur_link_2:
-          Value: true
-        ur_link_3:
-          Value: true
-        ur_link_4:
-          Value: true
-        ur_link_5:
-          Value: true
-        ur_link_6:
-          Value: true
-        ur_tool0:
-          Value: true
-        cmm_A_base:
-          Value: true
-        cnc_A_base:
-          Value: true
-        cnc_platform_link:
-          Value: true
-        conveyor_1:
-          Value: true
-        conveyor_2:
-          Value: true
-        conveyor_3:
-          Value: true
-        conveyor_4:
-          Value: true
-        world_frame:
-          Value: true
       Marker Scale: 1
       Name: TF
-      Show Arrows: true
+      Show Arrows: false
       Show Axes: true
       Show Names: true
       Tree:
-        world_frame:
-          cmm_A_base:
-            {}
-          cnc_A_base:
-            {}
-          cnc_platform_link:
-            ur_base_link:
-              ur_base:
-                {}
-              ur_link_1:
-                ur_link_2:
-                  ur_link_3:
-                    ur_link_4:
-                      ur_link_5:
-                        ur_link_6:
-                          ur_tool0:
-                            {}
-          conveyor_1:
-            {}
-          conveyor_2:
-            {}
-          conveyor_3:
-            {}
-          conveyor_4:
-            {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -335,6 +332,51 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        cmm_A_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        cnc_A_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        finger_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        finger_2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        finger_3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        palm:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        part_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        part_table_platform_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robot_platform_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         ur_base:
           Alpha: 1
           Show Axes: false
@@ -344,37 +386,46 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        ur_link_1:
+        ur_ee_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ur_link_2:
+        ur_forearm_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ur_link_3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ur_link_4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ur_link_5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ur_link_6:
+        ur_shoulder_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         ur_tool0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        ur_upper_arm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ur_wrist_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ur_wrist_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ur_wrist_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        world_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -408,41 +459,41 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.87234211
+      Distance: 3.43028474
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.0666769296
-        Y: -0.0625672713
-        Z: -0.291665316
+        X: -0.16064924
+        Y: 0.190972582
+        Z: 1.15063798
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.649797499
+      Pitch: 0.509799242
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 5.21180344
+      Yaw: 2.39361763
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: true
-  Height: 1176
+  Height: 1056
   Help:
     collapsed: false
   Hide Left Dock: true
   Hide Right Dock: true
   MotionPlanning:
     collapsed: true
-  MotionPlanning - Slider:
+  MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000002b800000452fc0200000006fb000000100044006900730070006c00610079007300000000280000018b000000d700fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001b9000002c1000001cc00fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000257000001790000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00ffffff000000010000015c00000452fc0200000001fb0000000a00560069006500770073000000002800000452000000ad00ffffff000006400000045200000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000002b8000003dafc0200000007fb000000100044006900730070006c00610079007300000000280000018b000000d700fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001b9000002490000018300fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000257000001790000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004a00ffffff000000010000015c00000452fc0200000001fb0000000a00560069006500770073000000002800000452000000ad00ffffff00000780000003da00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: true
-  Width: 1600
+  Width: 1920
   X: 0
   Y: 24

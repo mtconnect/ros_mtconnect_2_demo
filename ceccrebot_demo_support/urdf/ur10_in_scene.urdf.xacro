@@ -1,13 +1,49 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur10">
-  <!-- common stuff -->
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro" />
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/materials.xacro"/>
   <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
-
-  <!-- ur10 -->
   <xacro:include filename="$(find ur_description)/urdf/ur10.urdf.xacro" />
 
-  <!-- arm -->
+  <xacro:property name="root_frame_id" value="world_frame"/>
+  <xacro:property name="platform_thickness" value="1.0414"/>
+  <xacro:property name="table_height" value="1.0541"/>
+
+  <!-- root link -->
+  <link name="${root_frame_id}"/>
+
+  <!-- Robot support -->
+  <xacro:platform name="robot" parent_link="${root_frame_id}" length="0.1" width="0.1" height="${platform_thickness}" material="orange">
+    <origin xyz="0.0 0.0 ${platform_thickness}"/>
+  </xacro:platform>
+
+  <!-- Part table -->
+  <xacro:platform name="part_table" parent_link="${root_frame_id}" length="0.9144" width="0.762" height="${table_height}" material="light_gray">
+      <origin xyz="-0.4572 0.6858 ${table_height}" rpy="0 0 0"/>
+  </xacro:platform>
+
+  <!-- CNC -->
+  <xacro:cnc_VM5i id="A" parent_link="${root_frame_id}">
+    <origin xyz="0.75 -0.5 0.0" rpy="0 0 3.1415"/>
+  </xacro:cnc_VM5i>
+
+  <!-- CMM -->
+  <xacro:cmm id="A" parent_link="${root_frame_id}">
+    <origin xyz="1.403 0.085 0.91" rpy="0 0 1.5708"/>
+  </xacro:cmm>
+
+  <!-- Demo Parts -->
+  <xacro:part id="1" parent_link="${root_frame_id}">
+    <origin xyz="0.75 0.5 0.95 " rpy="0 0 -1.5708"/>
+  </xacro:part>
+
+  <!-- Robot -->
   <xacro:ur10_robot prefix="ur_" joint_limited="false"/>
+  <joint name="robot_platform_to_robot_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0.1"/>
+    <parent link="robot_platform_link"/>
+    <child link="ur_base_link"/>
+  </joint>
 
   <!-- Robotiq Gripper -->
   <xacro:include filename="$(find robotiq_s_model_visualization)/cfg/s-model_mesh_macro.xacro" />
@@ -16,15 +52,6 @@
     <origin rpy="0 0 0" xyz="0 0 0.160"/>
     <parent link="ur_tool0"/>
     <child link="palm"/>
-  </joint>
-
-  <!-- environment -->
-  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/environment_macros.xacro" />
-  <xacro:single_robot_demo_env root_frame_id="env_frame"/>
-  <joint name="environment_jt" type ="fixed">
-    <origin rpy="0 0 0" xyz="0 0 -1.0414"/>
-    <parent link="ur_base_link"/>
-    <child link="env_frame"/>
   </joint>
 
 </robot>
