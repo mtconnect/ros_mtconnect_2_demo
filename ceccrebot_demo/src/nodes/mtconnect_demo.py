@@ -9,41 +9,77 @@ import rospy
 import mtconnect_bridge
 #from simulator.src import Robot
 
-class MTConnectDemo:
+class RobotInterface:
     def __init__(self):
         self._bridge = mtconnect_bridge.Bridge()
-        #self._robot = Robot(host, port)
 
-        #Connect simulated bot to bridge
-        #self.after_move_in = self._robot.set_state_trigger('base:operational:loading:moving_in', self.move_to_cnc)
-        #self.after_move_out = self._robot.set_state_trigger('base:operational:loading:moving_out', self.move_out_of_cnc)
+    def move_sequence(self, targets):
+        for target in targets:
+            rospy.loginfo("Moving to '{}'".format(target))
+            self._bridge.do_work('move', target)
+        return True
 
-    def move_to_cnc(self):
-        rospy.loginfo("Demo moving to 'input_conveyor'")
-        self._bridge.do_work('move', 'input_conveyor')
-        rospy.loginfo("Demo moving to 'cnc'")
-        self._bridge.do_work('move', 'cnc')
-        rospy.loginfo("Demo moving to 'all_zeros'")
-        self._bridge.do_work('move', 'all_zeros')
-        #self.after_move_in()
+    def move_home(self):
+        self._bridge.do_work('move', 'home')
+        return True
 
-    def move_out_of_cnc(self):
-        rospy.loginfo("Demo moving to 'all_zeros'")
-        self._bridge.do_work('move', 'all_zeros')
-        #self.after_move_out()
+    def move_in(self, device):
+        move_targets = [
+            'waypoint',
+            'pregrasp',
+            'grasp',
+        ]
+        device_targets = [device + '_' + target for target in move_targets]
+        return self.move_sequence(device_targets)
 
-    def spin(self):
-        #Demo
-        self.move_to_cnc()
-        rospy.sleep(3.0)
-        self.move_out_of_cnc()
+    def move_out(self, device):
+        move_targets = [
+            'postgrasp',
+            'waypoint',
+        ]
+        device_targets = [device + '_' + target for target in move_targets]
+        return self.move_sequence(device_targets) and self.move_home()
 
-        #Let the threads started in the simulator run
-        rospy.spin()
+    def grab(self, data):
+        self._bridge.do_work('gripper', 'close')
+        return True
+
+    def release(self, data):
+        self._bridge.do_work('gripper', 'open')
+        return True
+
+def run_simulated_demo(robot):
+    robot.move_home()
+
+    #robot.move_in('cnc')
+    #robot.grab('')
+    #robot.move_out('cnc')
+
+    rospy.sleep(3.0)
+
+    #robot.move_in('cmm')
+    #robot.grab('')
+    #robot.move_out('cmm')
+
+    #rospy.sleep(3.0)
+
+    robot.move_in('table')
+    robot.release('')
+    robot.move_out('table')
+
+def init():
+    rospy.init_node('mtconnect_demo')
+    return RobotInterface()
 
 def main():
-    rospy.init_node('mtconnect_demo')
-    MTConnectDemo().spin()
+    robot_interface = init()
+
+    sim = rospy.get_param('~sim')
+    if sim:
+        run_simulated_demo(robot_interface)
+    else:
+        robot_state_machine = Robot(host, port, robot_interface)
+        rospy.spin() #We're now at the mercy of the state machine
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,23 @@
+joints:
+    - ur_shoulder_pan_joint
+    - ur_shoulder_lift_joint
+    - ur_elbow_joint
+    - ur_wrist_1_joint
+    - ur_wrist_2_joint
+    - ur_wrist_3_joint
+#joint positions are in degrees for ease of manually grabbing from the pendant
+positions:
+    home: [-60.0, -90.0, -90.0, -90.0, 90.0, -90.0]
+    vertical: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    cnc_waypoint: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    cnc_pregrasp: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    cnc_grasp: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    cnc_postgrasp: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    table_waypoint: [-48.22, -86.83, -129.27, -53.55, 90.75, -56.86]
+    table_pregrasp: [-48.22, -86.83, -129.27, -53.55, 90.75, -56.86]
+    table_grasp: [-48.13, -92.24, -132.76, -44.65, 90.70, -56.75]
+    table_postgrasp: [-48.22, -86.83, -129.27, -53.55, 90.75, -56.86]
+    cmm_waypoint: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    cmm_pregrasp: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    cmm_grasp: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+    cmm_postgrasp: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]

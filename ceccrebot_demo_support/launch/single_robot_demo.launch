@@ -2,7 +2,6 @@
 <launch>
   <arg name="rviz" default="true"/>
   <arg name="sim_robot" default="true"/>
-  <arg name="sim_gripper" default="true"/>
   <arg name="use_bswap" default="false"/>
   <arg name="robot_ip" unless="$(arg sim_robot)" default="192.168.1.43"/>
 
@@ -10,15 +9,14 @@
     <include file="$(find ceccrebot_demo_support)/launch/ur10_in_scene_setup.launch">
       <arg name="sim_robot" value="$(arg sim_robot)"/>
       <arg name="robot_ip" value="$(arg robot_ip)" unless="$(arg sim_robot)"/>
-      <arg name="sim_gripper" value="$(arg sim_gripper)"/>
     </include>
-    <!-- place robot in scene -->
-    <node name="robot_base_publisher" pkg="tf" type="static_transform_publisher"
-          args="0 0 1.0414 0 0 0 world_frame ur_base_link 20" />
 
     <!-- Location of the taught planes on the machines -->
     <node name="cmm_plane_publisher" pkg="tf" type="static_transform_publisher"
-          args="0.5205 0.37383 -0.06166 -0.12575 3.11592 0.02492 ur_base_link cmm_plane 20" />
+          args="-0.5205 -0.37383 -0.06166 -0.12575 3.11592 0.02492 ur_base cmm_plane 20" />
+
+    <node name="cnc_plane_publisher" pkg="tf" type="static_transform_publisher"
+          args="-0.23704 0.88584 -0.15071 -0.16736 3.13630 0.02332 ur_base cnc_plane 20" />
 
     <!-- CNC reference in robot coords (2018-07-17) -->
     <!-- x = 127.82, y = 1223.56, z = 20.94 -->

@@ -47,9 +47,6 @@ struct Config
   std::string motion_plan_service = "plan";
   std::string marker_topic = "markers";
   std::string grasp_action_name = "grasp";
-  double gripper_effort = 1.0;
-  double gripper_close_position = 0.0;
-  double gripper_open_position = 100.0;
 };
 
 bool loadConfig(ros::NodeHandle &nh, Config &cfg);
@@ -65,10 +62,6 @@ public:
 
   void work_dispatch(mtconnect_bridge::DeviceWorkGoal::ConstPtr work);
 
-  //void move_to_wait_position();
-  //void move_to_prepare_position();
-  //geometry_msgs::PoseStamped locatePart();
-
   //std::vector<geometry_msgs::PoseStamped> create_pick_moves(geometry_msgs::PoseStamped &pose);
   //std::vector<geometry_msgs::PoseStamped> create_place_moves();
   void pick(const std::vector<geometry_msgs::PoseStamped>& pick_poses);
@@ -79,7 +72,7 @@ protected:
   void mtconnect_work_available();
   void mtconnect_work_preempted();
 
-  void cmd_gripper(bool close);
+  void cmd_gripper(const std::string &data);
   //void set_attached_object(bool attach, moveit_msgs::RobotState &robot_state);
   //void reset_world();
 
@@ -90,7 +83,7 @@ protected:
 
   //void show_box(bool show);
 
-protected:
+private:
   Config cfg_;
   ros::Publisher marker_publisher_;
 
@@ -100,8 +93,9 @@ protected:
   std::condition_variable work_available_condition_;
 
   ros::ServiceClient motion_plan_client_;
-  GraspActionClientPtr grasp_action_client_ptr_;
   MoveGroupPtr move_group_ptr_;
+  ros::ServiceClient gripper_open_srv_;
+  ros::ServiceClient gripper_close_srv_;
 
   std::map<std::string, JointPose> robot_poses_;
 
