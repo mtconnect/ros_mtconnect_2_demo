@@ -22,6 +22,8 @@ limitations under the License.
 
 static const std::string MTCONNECT_WORK_ACTION = "work";
 
+inline double deg_to_rad(double d) {return d * 3.141592/180.0;}
+
 bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg)
 {
   nh.param<std::string>("world_frame_id", cfg.world_frame_id, cfg.world_frame_id);
@@ -48,13 +50,15 @@ void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string,
     {
       std::string pose_name = it->first;
       XmlRpc::XmlRpcValue joint_values = it->second;
+
       if (joint_names.size() != joint_values.size())
         throw std::runtime_error(
             "pose '" + pose_name + "': mismatch with number of joints, expected " + std::to_string(joint_names.size()));
+
       std::map<std::string, double> pose;
       for (int i=0; i < joint_names.size(); ++i)
       {
-        pose[joint_names[i]] = joint_values[i];
+        pose[joint_names[i]] = deg_to_rad(joint_values[i]);
       }
       robot_poses[pose_name] = pose;
     }
@@ -109,9 +113,6 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
 
 void ceccrebot_demo::Demo::run()
 {
-  // move to a "clear" position
-  go_to_pose("home");
-
   while (ros::ok())
   {
     std::unique_lock<std::mutex> lock(mutex_);
@@ -171,7 +172,6 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   else
   {
     ROS_ERROR_STREAM("Move " << pose_name << " Failed");
-    throw std::runtime_error("movement failed");
   }
 }
 
@@ -230,7 +230,7 @@ bool ceccrebot_demo::Demo::create_motion_plan(
 	req.group_name = cfg_.arm_group_name;
 	req.goal_constraints.push_back(pose_goal);
 	req.allowed_planning_time = 5.0;
-	req.num_planning_attempts = 1;
+	req.num_planning_attempts = 10;
 
 	// request motion plan
 	bool success = false;
