@@ -47,6 +47,7 @@ struct Config
   std::string motion_plan_service = "plan";
   std::string marker_topic = "markers";
   std::string grasp_action_name = "grasp";
+  double planning_time = 10.0; //seconds
 };
 
 bool loadConfig(ros::NodeHandle &nh, Config &cfg);

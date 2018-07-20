@@ -13,11 +13,9 @@
           <param name="slave_number" type="int" value="$(arg slave_number)"/>
       </node>
 
-      <!--
       <node pkg="ceccrebot_demo" type="gripper_control_node" name="gripper_control">
         <remap from="input" to="robotiq_gripper/input"/>
         <remap from="output" to="robotiq_gripper/output"/>
       </node>
-      -->
   </group>
 </launch>
