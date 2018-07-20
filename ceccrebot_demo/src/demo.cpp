@@ -17,10 +17,13 @@ limitations under the License.
 
 #include <moveit/kinematic_constraints/utils.h>
 #include <moveit_msgs/GetMotionPlan.h>
+#include <std_msgs/String.h>
 #include <std_srvs/Trigger.h>
 #include <xmlrpcpp/XmlRpcException.h>
 
 static const std::string MTCONNECT_WORK_ACTION = "work";
+static const std::string GRIPPER_OPEN_SERVICE = "gripper_open";
+static const std::string GRIPPER_CLOSE_SERVICE = "gripper_close";
 
 inline double deg_to_rad(double d) {return d * 3.141592/180.0;}
 
@@ -31,7 +34,6 @@ bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg
   nh.param<std::string>("wrist_link_name", cfg.wrist_link_name, cfg.wrist_link_name);
   nh.param<std::string>("motion_plan_service", cfg.motion_plan_service, cfg.motion_plan_service);
   nh.param<std::string>("marker_topic", cfg.marker_topic, cfg.marker_topic);
-  nh.param<std::string>("grasp_action_name", cfg.grasp_action_name, cfg.grasp_action_name);
   return true;
 }
 
@@ -88,6 +90,9 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
     throw std::runtime_error("Required parameter 'poses' not found");
   loadPoses(poses_param, robot_poses_);
 
+  //direct URScript interface
+  robot_raw_interface_ = nh.advertise<std_msgs::String>("ur_driver/URScript", 10);
+
   // moveit interface
   move_group_ptr_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(cfg_.arm_group_name);
   move_group_ptr_->setPlannerId("RRTConnectkConfigDefault");
@@ -98,8 +103,18 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   // marker publisher (rviz visualization)
   marker_publisher_ = nh.advertise<visualization_msgs::Marker>(cfg_.marker_topic, 1);
 
-  gripper_open_srv_ = nh.serviceClient<std_srvs::Trigger>("open");
-  gripper_close_srv_ = nh.serviceClient<std_srvs::Trigger>("close");
+  gripper_open_srv_ = nh.serviceClient<std_srvs::Trigger>(GRIPPER_OPEN_SERVICE);
+  if (! gripper_open_srv_.waitForExistence(ros::Duration(3.0)))
+  {
+    ROS_WARN("Gripper open service not available");
+    //throw std::runtime_error("Gripper open service not available");
+  }
+  gripper_close_srv_ = nh.serviceClient<std_srvs::Trigger>(GRIPPER_CLOSE_SERVICE);
+  if (! gripper_close_srv_.waitForExistence(ros::Duration(3.0)))
+  {
+    ROS_WARN("Gripper close service not available");
+    //throw std::runtime_error("Gripper close service not available");
+  }
 
   if (! ros::ok())
     throw std::runtime_error("ROS has shutdown");
@@ -129,7 +144,7 @@ void ceccrebot_demo::Demo::mtconnect_work_available()
   mtconnect_bridge::DeviceWorkGoal::ConstPtr goal = mtconnect_server_.acceptNewGoal();
 
   //Replace any current work and notify main thread
-  //TODO: a more formal preempting strategy
+  //TODO: a more formal preempting strategy, the client may decide to cancel
   std::lock_guard<std::mutex> guard(mutex_);
   curr_work_ = goal;
   work_available_condition_.notify_one();
@@ -141,18 +156,26 @@ void ceccrebot_demo::Demo::mtconnect_work_preempted()
 
 void ceccrebot_demo::Demo::work_dispatch(mtconnect_bridge::DeviceWorkGoal::ConstPtr work)
 {
-  //send feedback: performing work
-  if (work->type == "move")
+  //TODO: send feedback: performing work
+  try
   {
-    ROS_INFO_STREAM("Received work: move to " << work->data);
-    go_to_pose(work->data);
+    if (work->type == "move")
+    {
+      ROS_INFO_STREAM("Received work: move to " << work->data);
+      go_to_pose(work->data);
+    }
+    if (work->type == "gripper")
+    {
+      ROS_INFO_STREAM("Received work: command gripper to " << work->data);
+      cmd_gripper(work->data);
+    }
+    mtconnect_server_.setSucceeded();
   }
-  if (work->type == "gripper")
+  catch (const std::runtime_error &ex)
   {
-    ROS_INFO_STREAM("Received work: command gripper to " << work->data);
-    cmd_gripper(work->data);
+    ROS_ERROR_STREAM("Work execution failed: " << ex.what());
+    mtconnect_server_.setAborted();
   }
-  //send completion
   curr_work_ = nullptr;
 }
 
@@ -165,13 +188,14 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   move_group_ptr_->setPlanningTime(5.0);
 
   bool success = (bool) move_group_ptr_->move();
+  //stop_robot();
   if(success)
   {
     ROS_INFO_STREAM("Move " << pose_name << " Succeeded");
   }
   else
   {
-    ROS_ERROR_STREAM("Move " << pose_name << " Failed");
+    throw std::runtime_error("Failed to move to " + pose_name);
   }
 }
 
@@ -182,11 +206,13 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     std_srvs::Trigger srv_data;
     if (! gripper_open_srv_.call(srv_data))
     {
-      ROS_ERROR_STREAM("Gripper open failed for an unknown reason");
+      throw std::runtime_error("Gripper open failed for an unknown reason");
     }
     if (! srv_data.response.success)
     {
-      ROS_ERROR_STREAM("Gripper open failed: " << srv_data.response.message);
+      std::ostringstream ss;
+      ss << "Gripper open failed: " << srv_data.response.message;
+      throw std::runtime_error(ss.str());
     }
   }
   else if (cmd == "close")
@@ -194,17 +220,31 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     std_srvs::Trigger srv_data;
     if (! gripper_open_srv_.call(srv_data))
     {
-      ROS_ERROR_STREAM("Gripper close failed for an unknown reason");
+      throw std::runtime_error("Gripper close failed for an unknown reason");
     }
     if (! srv_data.response.success)
     {
-      ROS_ERROR_STREAM("Gripper close failed: " << srv_data.response.message);
+      std::ostringstream ss;
+      ss << "Gripper close failed: " << srv_data.response.message;
+      throw std::runtime_error(ss.str());
     }
   }
   else
   {
-    ROS_ERROR_STREAM("Unrecognized gripper command data: " << cmd);
+    std::ostringstream ss;
+    ss << "Unrecognized gripper command data: " << cmd;
+    throw std::runtime_error(ss.str());
   }
+}
+
+void ceccrebot_demo::Demo::stop_robot() const
+{
+  std::string stop_cmd = "stopj(1)";
+
+  std_msgs::String msg;
+  msg.data = stop_cmd;
+  robot_raw_interface_.publish(msg);
+  ROS_WARN("Sent robot stop");
 }
 
 bool ceccrebot_demo::Demo::create_motion_plan(
@@ -213,13 +253,13 @@ bool ceccrebot_demo::Demo::create_motion_plan(
     moveit::planning_interface::MoveGroupInterface::Plan &plan)
 {
 	// constructing motion plan goal constraints
-	std::vector<double> position_tolerances(3, 0.01f);
-	std::vector<double> orientation_tolerances(3, 0.01f);
-	moveit_msgs::Constraints pose_goal = kinematic_constraints::constructGoalConstraints(
-      cfg_.wrist_link_name,
-      pose_target,
-      position_tolerances,
-			orientation_tolerances);
+	double joint_tolerance = 0.05;
+  //const moveit::core::RobotState robot_state;
+  const robot_model::JointModelGroup * joint_model_group = move_group_ptr_->getRobotModel()->getJointModelGroup(cfg_.arm_group_name);
+	//moveit_msgs::Constraints joint_goal = kinematic_constraints::constructGoalConstraints(
+      //start_robot_state,
+      //joint_model_group,
+      //joint_tolerance);
 
 	// creating motion plan request
 	moveit_msgs::GetMotionPlan motion_plan;
@@ -228,7 +268,7 @@ bool ceccrebot_demo::Demo::create_motion_plan(
 	req.start_state = start_robot_state;
 	req.start_state.is_diff = true;
 	req.group_name = cfg_.arm_group_name;
-	req.goal_constraints.push_back(pose_goal);
+	//req.goal_constraints.push_back(joint_goal);
 	req.allowed_planning_time = 5.0;
 	req.num_planning_attempts = 10;
 

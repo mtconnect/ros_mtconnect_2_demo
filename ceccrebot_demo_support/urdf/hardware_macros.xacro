@@ -88,7 +88,7 @@
       </collision>
       <collision name="cnc_${id}_back">
         <geometry>
-          <box size="1.60 1.25 2.0"/>
+          <box size="1.60 0.75 2.0"/>
         </geometry>
         <origin xyz="0.8 1.05 1.0" />
       </collision>
@@ -104,12 +104,14 @@
         </geometry>
         <origin xyz="0.2 0.85 1.0" />
       </collision>
+      <!--
       <collision name="cnc_${id}_computer">
         <geometry>
           <box size="0.5 1.2 0.8"/>
         </geometry>
         <origin xyz="1.4 -0.6 1.5"/>
       </collision>
+      -->
     </link>
     <joint name="cnc_${id}_joint" type ="fixed">
       <xacro:insert_block name="location" />
