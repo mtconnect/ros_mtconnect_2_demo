@@ -34,6 +34,7 @@ bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg
   nh.param<std::string>("wrist_link_name", cfg.wrist_link_name, cfg.wrist_link_name);
   nh.param<std::string>("motion_plan_service", cfg.motion_plan_service, cfg.motion_plan_service);
   nh.param<std::string>("marker_topic", cfg.marker_topic, cfg.marker_topic);
+  nh.param<double>("planning_time", cfg.planning_time, cfg.planning_time);
   return true;
 }
 
@@ -185,7 +186,7 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
     throw std::runtime_error("Move target '" + pose_name + "' is unknown");
 
   move_group_ptr_->setJointValueTarget(robot_poses_[pose_name]);
-  move_group_ptr_->setPlanningTime(5.0);
+  move_group_ptr_->setPlanningTime(cfg_.planning_time);
 
   bool success = (bool) move_group_ptr_->move();
   //stop_robot();
