@@ -73,8 +73,7 @@ protected:
   void mtconnect_work_preempted();
 
   void cmd_gripper(const std::string &data);
-  //void set_attached_object(bool attach, moveit_msgs::RobotState &robot_state);
-  //void reset_world();
+  void stop_robot() const;
 
   bool create_motion_plan(
       const geometry_msgs::PoseStamped &pose_target,
@@ -92,11 +91,12 @@ private:
   std::mutex mutex_;
   std::condition_variable work_available_condition_;
 
+  ros::Publisher robot_raw_interface_;
   ros::ServiceClient motion_plan_client_;
-  MoveGroupPtr move_group_ptr_;
   ros::ServiceClient gripper_open_srv_;
   ros::ServiceClient gripper_close_srv_;
 
+  MoveGroupPtr move_group_ptr_;
   std::map<std::string, JointPose> robot_poses_;
 
   tf::TransformBroadcaster tf_broadcaster_;

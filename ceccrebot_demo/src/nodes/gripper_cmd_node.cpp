@@ -16,12 +16,13 @@ limitations under the License.
 #include <atomic>
 
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
 #include <robotiq_s_model_control/SModel_robot_input.h>
 #include <robotiq_s_model_control/SModel_robot_output.h>
 #include <std_srvs/Trigger.h>
 #include <xmlrpcpp/XmlRpcValue.h>
 
-static constexpr double TIMEOUT = 3.0; //seconds
+static constexpr double TIMEOUT = 5.0; //seconds
 
 namespace ceccrebot_demo
 {
@@ -30,7 +31,7 @@ struct Config
 {
   int gripper_close_position = 255;
   int gripper_open_position = 0;
-  int gripper_speed = 255;
+  int gripper_speed = 50;
   int gripper_force = 255;
   int scissor_position = 150;
 };
@@ -46,9 +47,10 @@ bool loadConfig(ros::NodeHandle &nh, Config &cfg);
 class GripperControl
 {
 public:
-  GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp);
+  GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp, ros::NodeHandle &input_nh);
 
   void inputCallback(robotiq_s_model_control::SModel_robot_input::ConstPtr msg);
+  bool activate(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp);
   bool open(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp);
   bool close(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp);
 
@@ -62,6 +64,7 @@ private:
 
   ros::Subscriber input_sub_;
   ros::Publisher output_pub_;
+  ros::ServiceServer activate_srv_;
   ros::ServiceServer open_srv_;
   ros::ServiceServer close_srv_;
 
@@ -69,14 +72,16 @@ private:
   std::atomic<bool> stationary_;
 };
 
-GripperControl::GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
-  curr_input_(new robotiq_s_model_control::SModel_robot_input)
+GripperControl::GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp, ros::NodeHandle &input_nh) :
+  curr_input_(new robotiq_s_model_control::SModel_robot_input),
+  stationary_(true)
 {
   if (! loadConfig(nh, cfg_))
     throw std::runtime_error("Failed to load node configuration");
 
-  input_sub_ = nh.subscribe("input", 10, &GripperControl::inputCallback, this);
+  input_sub_ = input_nh.subscribe("input", 10, &GripperControl::inputCallback, this);
   output_pub_ = nh.advertise<robotiq_s_model_control::SModel_robot_output>("output", 10);
+  activate_srv_ = nh.advertiseService("activate", &GripperControl::activate, this);
   open_srv_ = nh.advertiseService("open", &GripperControl::open, this);
   close_srv_ = nh.advertiseService("close", &GripperControl::close, this);
 }
@@ -103,6 +108,11 @@ void GripperControl::inputCallback(robotiq_s_model_control::SModel_robot_input::
 {
   curr_input_ = msg;
   stationary_ = (msg->gSTA == 0);
+}
+
+bool GripperControl::activate(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)
+{
+  return true;
 }
 
 bool GripperControl::open(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)
@@ -147,7 +157,14 @@ bool GripperControl::waitMotionStart(double timeout) const
   while ((ros::Time::now() - t0).toSec() < timeout)
   {
     if (! stationary_)
+    {
+      ROS_INFO("Wait start: Moving");
       return true;
+    }
+    else
+    {
+      ROS_INFO("Wait start: Static");
+    }
     ros::Duration(0.05).sleep();
   }
   return false;
@@ -159,7 +176,14 @@ bool GripperControl::waitMotionStop(double timeout) const
   while ((ros::Time::now() - t0).toSec() < timeout)
   {
     if (stationary_)
+    {
+      ROS_INFO("Wait stop: Static");
       return true;
+    }
+    else
+    {
+      ROS_INFO("Wait stop: Moving");
+    }
     ros::Duration(0.05).sleep();
   }
   return false;
@@ -173,11 +197,16 @@ int main(int argc, char * argv[])
   ros::NodeHandle nh, nhp("~");
   ros::AsyncSpinner spinner(2);
 
+  ros::CallbackQueue input_queue;
+  ros::NodeHandle input_nh;
+  input_nh.setCallbackQueue(&input_queue);
+  ros::AsyncSpinner input_spinner(2, &input_queue);
   try
   {
-    ceccrebot_demo::GripperControl n(nh, nhp);
+    ceccrebot_demo::GripperControl n(nh, nhp, input_nh);
 
     spinner.start();
+    input_spinner.start();
     ros::waitForShutdown();
   }
   catch (const std::runtime_error &ex)
