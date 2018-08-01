@@ -188,9 +188,24 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   move_group_ptr_->setJointValueTarget(robot_poses_[pose_name]);
   move_group_ptr_->setPlanningTime(cfg_.planning_time);
 
-  bool success = (bool) move_group_ptr_->move();
-  //stop_robot();
-  if(success)
+  //bool success = (bool) move_group_ptr_->move();
+
+  // Create new plan
+  moveit::planning_interface::MoveGroupInterface::Plan plan;
+
+  // Plan to pose_name
+  bool plan_success = (bool) move_group_ptr_->plan(plan);
+  if(!plan_success)   throw std::runtime_error("Failed to plan to " + pose_name);
+
+  // Modify plan
+  ros::Duration settle_time(0.25);     // Amount of time added to trajectory for arm to stop
+  plan.trajectory_.joint_trajectory.points.push_back(plan.trajectory_.joint_trajectory.points.back());
+  plan.trajectory_.joint_trajectory.points.back().time_from_start += settle_time;
+
+  // Execute plan
+  bool execution_success = (bool) move_group_ptr_->execute(plan);
+
+  if(plan_success && execution_success)
   {
     ROS_INFO_STREAM("Move " << pose_name << " Succeeded");
   }
