@@ -47,7 +47,7 @@ bool loadConfig(ros::NodeHandle &nh, Config &cfg);
 class GripperControl
 {
 public:
-  GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp, ros::NodeHandle &input_nh);
+  GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp, ros::NodeHandle &srv_nh);
 
   void inputCallback(robotiq_s_model_control::SModel_robot_input::ConstPtr msg);
   bool activate(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp);
@@ -72,18 +72,21 @@ private:
   std::atomic<bool> stationary_;
 };
 
-GripperControl::GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp, ros::NodeHandle &input_nh) :
+GripperControl::GripperControl(ros::NodeHandle &nh, ros::NodeHandle &nhp, ros::NodeHandle &srv_nh) :
   curr_input_(new robotiq_s_model_control::SModel_robot_input),
   stationary_(true)
 {
   if (! loadConfig(nh, cfg_))
     throw std::runtime_error("Failed to load node configuration");
 
-  input_sub_ = input_nh.subscribe("input", 10, &GripperControl::inputCallback, this);
+  // I/O with device
+  input_sub_ = nh.subscribe("input", 10, &GripperControl::inputCallback, this);
   output_pub_ = nh.advertise<robotiq_s_model_control::SModel_robot_output>("output", 10);
-  activate_srv_ = nh.advertiseService("activate", &GripperControl::activate, this);
-  open_srv_ = nh.advertiseService("open", &GripperControl::open, this);
-  close_srv_ = nh.advertiseService("close", &GripperControl::close, this);
+
+  // External interfaces
+  activate_srv_ = srv_nh.advertiseService("activate", &GripperControl::activate, this);
+  open_srv_ = srv_nh.advertiseService("open", &GripperControl::open, this);
+  close_srv_ = srv_nh.advertiseService("close", &GripperControl::close, this);
 }
 
 bool loadConfig(ros::NodeHandle &nh, Config &cfg)
@@ -197,16 +200,18 @@ int main(int argc, char * argv[])
   ros::NodeHandle nh, nhp("~");
   ros::AsyncSpinner spinner(2);
 
-  ros::CallbackQueue input_queue;
-  ros::NodeHandle input_nh;
-  input_nh.setCallbackQueue(&input_queue);
-  ros::AsyncSpinner input_spinner(2, &input_queue);
+  //Service callbacks need to be asynchronous with rest of system
+  ros::CallbackQueue srv_queue;
+  ros::NodeHandle srv_nh;
+  srv_nh.setCallbackQueue(&srv_queue);
+  ros::AsyncSpinner srv_spinner(2, &srv_queue);
+
   try
   {
-    ceccrebot_demo::GripperControl n(nh, nhp, input_nh);
+    ceccrebot_demo::GripperControl n(nh, nhp, srv_nh);
 
     spinner.start();
-    input_spinner.start();
+    srv_spinner.start();
     ros::waitForShutdown();
   }
   catch (const std::runtime_error &ex)
