@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="sim_robot" default="true"/>
+  <arg name="sim_gripper" default="true"/>
   <arg name="robot_ip" unless="$(arg sim_robot)"/>
 
   <param name="robot_description"
@@ -33,14 +34,6 @@
       <arg name="max_payload" value="5.0" />
     </include>
 
-    <!-- 3 finger gripper -->
-    <!-- Unfortunately the ethercat interface can't seem to handle connecting at the same time as
-         the normal TCP/IP robot connection. For now, this launch file needs to be started and
-         running before the demo launch file. Note that this may require setting the 'ns' arg to be
-         sure the gripper is in the same namespace as the robot -->
-    <!--
-    <include file="$(find ceccrebot_demo_support)/launch/robotiq_gripper.launch"/>
-    -->
   </group>
 
   <group if="$(arg sim_robot)">
@@ -54,4 +47,26 @@
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
   </group>
+
+  <group unless="$(arg sim_gripper)">
+    <!-- 3 finger gripper -->
+    <!-- Unfortunately the ethercat interface can't seem to handle connecting at the same time as
+         the normal TCP/IP robot connection. For now, this launch file needs to be started and
+         running before the demo launch file. Note that this may require setting the 'ns' arg to be
+         sure the gripper is in the same namespace as the robot -->
+    <!--
+    <include file="$(find ceccrebot_demo_support)/launch/robotiq_gripper.launch">
+      <arg name="sim" value="false"/>
+    </include>
+    -->
+  </group>
+
+  <group if="$(arg sim_gripper)">
+    <!--
+    <include file="$(find ceccrebot_demo_support)/launch/robotiq_gripper.launch">
+      <arg name="sim" value="true"/>
+    </include>
+    -->
+  </group>
+
 </launch>

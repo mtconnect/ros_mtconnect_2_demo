@@ -2,12 +2,14 @@
 <launch>
   <arg name="rviz" default="true"/>
   <arg name="sim_robot" default="true"/>
+  <arg name="sim_gripper" default="true"/>
   <arg name="use_bswap" default="false"/>
   <arg name="robot_ip" unless="$(arg sim_robot)" default="192.168.1.43"/>
 
   <group ns="ur">
     <include file="$(find ceccrebot_demo_support)/launch/ur10_in_scene_setup.launch">
       <arg name="sim_robot" value="$(arg sim_robot)"/>
+      <arg name="sim_gripper" value="$(arg sim_gripper)"/>
       <arg name="robot_ip" value="$(arg robot_ip)" unless="$(arg sim_robot)"/>
     </include>
 
