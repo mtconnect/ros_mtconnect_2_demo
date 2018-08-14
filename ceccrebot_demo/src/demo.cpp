@@ -238,7 +238,7 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
   else if (cmd == "close")
   {
     std_srvs::Trigger srv_data;
-    if (! gripper_open_srv_.call(srv_data))
+    if (! gripper_close_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper close failed for an unknown reason");
     }
