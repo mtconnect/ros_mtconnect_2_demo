@@ -5,13 +5,17 @@ import rospy
 import std_srvs.srv
 
 def open_called(request):
+    rospy.loginfo("Sim gripper: OPENING")
     rospy.sleep(3.0)
+    rospy.loginfo("Sim gripper: OPEN")
     response = std_srvs.srv.TriggerResponse()
     response.success = True
     return response
 
 def close_called(request):
+    rospy.loginfo("Sim gripper: CLOSING")
     rospy.sleep(3.0)
+    rospy.loginfo("Sim gripper: CLOSED")
     response = std_srvs.srv.TriggerResponse()
     response.success = True
     return response
