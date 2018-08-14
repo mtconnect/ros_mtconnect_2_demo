@@ -1,0 +1,32 @@
+#!/usr/bin/env python2
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import rospy
+import std_srvs.srv
+
+def open_called(request):
+    rospy.loginfo("Sim gripper: OPENING")
+    rospy.sleep(3.0)
+    rospy.loginfo("Sim gripper: OPEN")
+    response = std_srvs.srv.TriggerResponse()
+    response.success = True
+    return response
+
+def close_called(request):
+    rospy.loginfo("Sim gripper: CLOSING")
+    rospy.sleep(3.0)
+    rospy.loginfo("Sim gripper: CLOSED")
+    response = std_srvs.srv.TriggerResponse()
+    response.success = True
+    return response
+
+def main():
+    rospy.init_node('fake_gripper_node')
+
+    open_srv = rospy.Service('open', std_srvs.srv.Trigger, open_called)
+    close_srv = rospy.Service('close', std_srvs.srv.Trigger, close_called)
+
+    rospy.spin()
+
+if __name__ == '__main__':
+    main()

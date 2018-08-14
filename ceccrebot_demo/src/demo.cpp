@@ -230,11 +230,15 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
       ss << "Gripper open failed: " << srv_data.response.message;
       throw std::runtime_error(ss.str());
     }
+    else
+    {
+      ROS_INFO("Gripper opened");
+    }
   }
   else if (cmd == "close")
   {
     std_srvs::Trigger srv_data;
-    if (! gripper_open_srv_.call(srv_data))
+    if (! gripper_close_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper close failed for an unknown reason");
     }
@@ -243,6 +247,10 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
       std::ostringstream ss;
       ss << "Gripper close failed: " << srv_data.response.message;
       throw std::runtime_error(ss.str());
+    }
+    else
+    {
+      ROS_INFO("Gripper closed");
     }
   }
   else

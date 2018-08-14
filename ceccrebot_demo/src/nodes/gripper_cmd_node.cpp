@@ -110,7 +110,8 @@ robotiq_s_model_control::SModel_robot_output outputMsgFromConfig(const Config &c
 void GripperControl::inputCallback(robotiq_s_model_control::SModel_robot_input::ConstPtr msg)
 {
   curr_input_ = msg;
-  stationary_ = (msg->gSTA == 0);
+  if (msg->gGTO == 1)
+    stationary_ = (msg->gSTA != 0);
 }
 
 bool GripperControl::activate(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)
