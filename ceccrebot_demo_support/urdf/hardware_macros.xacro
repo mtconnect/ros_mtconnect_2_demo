@@ -84,19 +84,19 @@
         <geometry>
           <box size="1.6 1.8 0.8"/>
         </geometry>
-        <origin xyz="0.8 0.9 0.4" />
+        <origin xyz="0.8 0.9 0.3" />
       </collision>
       <collision name="cnc_${id}_back">
         <geometry>
-          <box size="1.60 0.75 2.0"/>
+          <box size="1.40 0.35 2.0"/>
         </geometry>
         <origin xyz="0.8 1.05 1.0" />
       </collision>
       <collision name="cnc_${id}_right_wall">
         <geometry>
-          <box size="0.65 1.7 2.0"/>
+          <box size="0.15 1.7 2.0"/>
         </geometry>
-        <origin xyz="1.32 0.85 1.0" />
+        <origin xyz="1.42 0.85 1.0" />
       </collision>
       <collision name="cnc_${id}_left_wall">
         <geometry>
