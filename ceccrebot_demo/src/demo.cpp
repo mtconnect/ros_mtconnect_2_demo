@@ -202,6 +202,10 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   plan.trajectory_.joint_trajectory.points.push_back(plan.trajectory_.joint_trajectory.points.back());
   plan.trajectory_.joint_trajectory.points.back().time_from_start += settle_time;
 
+//  ros::Duration settle_time(0.25);     // Amount of time added to trajectory for arm to stop
+  plan.trajectory_.joint_trajectory.points.push_back(plan.trajectory_.joint_trajectory.points.back());
+  plan.trajectory_.joint_trajectory.points.back().time_from_start += settle_time;
+
   // Execute plan
   bool execution_success = (bool) move_group_ptr_->execute(plan);
 
