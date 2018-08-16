@@ -34,14 +34,14 @@ class RobotInterface:
     POINTS = {
         'cnc': {
             'default': {
-                'in': ['waypoint', 'door', 'pregrasp', 'grasp'],
-                'out': ['pregrasp', 'waypoint'],
+                'in': ['waypoint', 'door', 'door2', 'pregrasp', 'grasp'],
+                'out': ['pregrasp', 'door2', 'door', 'waypoint'],
             },
         },
         'cmm': {
              'default': {
-                 'in': ['waypoint', 'pregrasp', 'grasp'],
-                 'out': ['pregrasp', 'waypoint'],
+                 'in': ['waypoint', 'waypoint2', 'waypoint3', 'pregrasp', 'grasp'],
+                 'out': ['pregrasp', 'waypoint3', 'waypoint2', 'waypoint'],
              },
         },
         'conv': {
@@ -121,28 +121,60 @@ class RobotInterface:
 
 def run_simulated_demo(robot):
     robot.move_home()
+#    robot.release('')
+#    for ind in range(1):
+#        robot.move_in('t1', '')
+#        robot.grab('')
+#        rospy.sleep(3.0)
+#        robot.move_out('t1', '')
 
-    robot.move_in('cnc1', '')
+#        rospy.sleep(0.5)
+
+#        robot.move_in('cnc1', '')
+#        robot.release('')
+#        rospy.sleep(3.0)
+#        robot.move_out('cnc1', '')
+
+#        rospy.sleep(0.5)
+
+#        robot.move_in('cnc1', '')
+#        robot.grab('')
+#        rospy.sleep(3.0)
+#        robot.move_out('cnc1', '')
+
+#        rospy.sleep(0.5)
+
+#        robot.move_in('t1', '')
+#        robot.release('')
+#        rospy.sleep(3.0)
+#        robot.move_out('t1', '')
+
+
+    robot.move_in('t1', '')
     robot.grab('')
-    robot.move_out('cnc1', '')
-
     rospy.sleep(3.0)
+    robot.move_out('t1', '')
 
     robot.move_in('cmm1', '')
     robot.release('')
+    rospy.sleep(3.0)
     robot.move_out('cmm1', '')
 
     rospy.sleep(3.0)
 
-    robot.move_in('t1', '')
+    robot.move_in('cmm1', '')
     robot.grab('')
+    rospy.sleep(3.0)
+    robot.move_out('cmm1', '')
+
+    robot.move_in('t1', '')
+    robot.release('')
+    rospy.sleep(3.0)
     robot.move_out('t1', '')
 
-    rospy.sleep(3.0)
 
-    robot.move_in('b1', '')
-    robot.release('')
-    robot.move_out('b1', '')
+
+
 
 def init():
     rospy.init_node('mtconnect_demo')
