@@ -1,6 +1,6 @@
 address: 127.0.0.1
 port: 7997
-joint_topic: /ur/joint_states
+joint_topic: joint_states
 joint_data_items:
     - j1_angle
     - j2_angle
