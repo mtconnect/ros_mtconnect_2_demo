@@ -1,0 +1,11 @@
+<launch>
+
+<group ns="ur">
+<node name="mtconnect_publisher" pkg="mtconnect_bridge" type="ros_adapter.py" output="screen">
+  <rosparam command="load" file="$(find ceccrebot_demo)/config/mtconnect_publisher.yaml"/>
+</node>
+</group>
+
+
+
+</launch>
