@@ -23,16 +23,23 @@ def map_device_name(dev):
     elif dev == 'cnc_t1':
         return 'cnctool'
 
+def map_device_destination(dev, dest):
+    if dev != 'conv':
+        dest = 'default'
+
+    return dest
+
+
 class RobotInterface:
     POINTS = {
         'cnc': {
-            '': {
+            'default': {
                 'in': ['waypoint', 'door', 'pregrasp', 'grasp'],
                 'out': ['pregrasp', 'waypoint'],
             },
         },
         'cmm': {
-             '': {
+             'default': {
                  'in': ['waypoint', 'pregrasp', 'grasp'],
                  'out': ['pregrasp', 'waypoint'],
              },
@@ -50,25 +57,25 @@ class RobotInterface:
                 'in': ['pregrasp', 'grasp'],
                 'out': ['pregrasp'],
             },
-            '': {
+            'default': {
                 'in': ['pregrasp', 'grasp'],
                 'out': ['pregrasp'],
             },
         },
         'buff': {
-            '': {
+            'default': {
                 'in': ['pregrasp', 'grasp'],
                 'out': ['pregrasp'],
             },
         },
         'tool': {
-            '': {
+            'default': {
                 'in': ['pregrasp', 'grasp'],
                 'out': ['pregrasp'],
             },
         },
         'cnctool': {
-            '': {
+            'default': {
                 'in': ['pregrasp', 'grasp'],
                 'out': ['pregrasp'],
             },
@@ -91,19 +98,17 @@ class RobotInterface:
     def move_in(self, device, dest):
         print('Robot move_in to dev: {}, dest: {}'.format(device, dest))
         loc = map_device_name(device)
-        if loc != 'conv':
-            dest = ''
+        dest = map_device_destination(loc, dest)
         move_targets = self.POINTS[loc][dest]['in']
-        device_targets = [loc + '_' + dest + target for target in move_targets]
+        device_targets = [loc + '_' + dest + '_' +  target for target in move_targets]
         return self.move_sequence(device_targets)
 
     def move_out(self, device, dest):
         print('Robot move_in to dev: {}, dest: {}'.format(device, dest))
         loc = map_device_name(device)
-        if loc != 'conv':
-            dest = ''
+        dest = map_device_destination(loc, dest)
         move_targets = self.POINTS[loc][dest]['out']
-        device_targets = [loc + '_' + dest + target for target in move_targets]
+        device_targets = [loc + '_' + dest + '_' + target for target in move_targets]
         return self.move_sequence(device_targets) and self.move_home()
 
     def grab(self, data):
@@ -151,7 +156,7 @@ def main():
         run_simulated_demo(robot_interface)
     else:
         rospy.loginfo("In dir: " + os.getcwd())
-        os.chdir(os.path.join(os.getenv("HOME"), "catkin_ws/src/ceccrebot/simulator/src"))
+        os.chdir(os.path.join(os.getenv("HOME"), "mtconnect_dev/src/ceccrebot/simulator/src"))
         rospy.loginfo("In dir: " + os.getcwd())
 
         host = rospy.get_param('~host')
