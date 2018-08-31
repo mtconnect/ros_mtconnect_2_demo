@@ -11,41 +11,67 @@ from simulator.src.robot import Robot
 
 def map_device_name(dev):
     if dev == 'cnc1':
-        return 'table1'
+        return 'cnc'
     elif dev == 'conv1':
-        return 'table1'
+        return 'conv'
     elif dev == 'cmm1':
-        return 'table2'
+        return 'cmm'
     elif dev == 'b1':
-        return 'table3'
+        return 'buff'
     elif dev == 't1':
-        return 'table4'
+        return 'tool'
+    elif dev == 'cnc_t1':
+        return 'cnctool'
 
 class RobotInterface:
     POINTS = {
         'cnc': {
-            'in': ['waypoint', 'pregrasp', 'grasp'],
-            'out': ['pregrasp', 'waypoint'],
+            '': {
+                'in': ['waypoint', 'door', 'pregrasp', 'grasp'],
+                'out': ['pregrasp', 'waypoint'],
+            },
         },
         'cmm': {
-            'in': ['waypoint', 'pregrasp', 'grasp'],
-            'out': ['pregrasp', 'waypoint'],
+             '': {
+                 'in': ['waypoint', 'pregrasp', 'grasp'],
+                 'out': ['pregrasp', 'waypoint'],
+             },
         },
-        'table1': {
-            'in': ['pregrasp', 'grasp'],
-            'out': ['pregrasp'],
+        'conv': {
+            'good': {
+                'in': ['pregrasp', 'grasp'],
+                'out': ['pregrasp'],
+            },
+            'bad': {
+                'in': ['pregrasp', 'grasp'],
+                'out': ['pregrasp'],
+            },
+            'rework': {
+                'in': ['pregrasp', 'grasp'],
+                'out': ['pregrasp'],
+            },
+            '': {
+                'in': ['pregrasp', 'grasp'],
+                'out': ['pregrasp'],
+            },
         },
-        'table2': {
-            'in': ['pregrasp', 'grasp'],
-            'out': ['pregrasp'],
+        'buff': {
+            '': {
+                'in': ['pregrasp', 'grasp'],
+                'out': ['pregrasp'],
+            },
         },
-        'table3': {
-            'in': ['pregrasp', 'grasp'],
-            'out': ['pregrasp'],
+        'tool': {
+            '': {
+                'in': ['pregrasp', 'grasp'],
+                'out': ['pregrasp'],
+            },
         },
-        'table4': {
-            'in': ['pregrasp', 'grasp'],
-            'out': ['pregrasp'],
+        'cnctool': {
+            '': {
+                'in': ['pregrasp', 'grasp'],
+                'out': ['pregrasp'],
+            },
         },
     }
 
@@ -65,15 +91,19 @@ class RobotInterface:
     def move_in(self, device, dest):
         print('Robot move_in to dev: {}, dest: {}'.format(device, dest))
         loc = map_device_name(device)
-        move_targets = self.POINTS[loc]['in']
-        device_targets = [loc + '_' + target for target in move_targets]
+        if loc != 'conv':
+            dest = ''
+        move_targets = self.POINTS[loc][dest]['in']
+        device_targets = [loc + '_' + dest + target for target in move_targets]
         return self.move_sequence(device_targets)
 
     def move_out(self, device, dest):
         print('Robot move_in to dev: {}, dest: {}'.format(device, dest))
         loc = map_device_name(device)
-        move_targets = self.POINTS[loc]['out']
-        device_targets = [loc + '_' + target for target in move_targets]
+        if loc != 'conv':
+            dest = ''
+        move_targets = self.POINTS[loc][dest]['out']
+        device_targets = [loc + '_' + dest + target for target in move_targets]
         return self.move_sequence(device_targets) and self.move_home()
 
     def grab(self, data):
@@ -121,7 +151,7 @@ def main():
         run_simulated_demo(robot_interface)
     else:
         rospy.loginfo("In dir: " + os.getcwd())
-        os.chdir(os.path.join(os.getenv("HOME"), "Workspaces/ceccrebot/src/ceccrebot/simulator/src"))
+        os.chdir(os.path.join(os.getenv("HOME"), "catkin_ws/src/ceccrebot/simulator/src"))
         rospy.loginfo("In dir: " + os.getcwd())
 
         host = rospy.get_param('~host')
