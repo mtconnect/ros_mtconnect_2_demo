@@ -20,7 +20,7 @@ def map_device_name(dev):
         return 'buff'
     elif dev == 't1':
         return 'tool'
-    elif dev == 'cnc_t1':
+    elif dev == 'cnc1_t1':
         return 'cnctool'
 
 def map_device_destination(dev, dest):
