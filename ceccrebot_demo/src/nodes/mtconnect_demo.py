@@ -156,7 +156,7 @@ def main():
         run_simulated_demo(robot_interface)
     else:
         rospy.loginfo("In dir: " + os.getcwd())
-        os.chdir(os.path.join(os.getenv("HOME"), "mtconnect_dev/src/ceccrebot/simulator/src"))
+        os.chdir(os.path.join(os.getenv("HOME"), "catkin_ws/src/ceccrebot/simulator/src"))
         rospy.loginfo("In dir: " + os.getcwd())
 
         host = rospy.get_param('~host')
