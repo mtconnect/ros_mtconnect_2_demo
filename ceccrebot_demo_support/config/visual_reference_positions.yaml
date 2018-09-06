@@ -1,0 +1,12 @@
+table_corner:
+    name: [ur_shoulder_pan_joint, ur_shoulder_lift_joint, ur_elbow_joint, ur_wrist_1_joint, ur_wrist_2_joint, ur_wrist_3_joint]
+    position: [-1.5571077505694788, -1.7036665121661585, -2.3155630270587366, -0.7136433760272425, 1.556476354598999, -1.122833553944723]
+tigo_corner:
+    name: [ur_shoulder_pan_joint, ur_shoulder_lift_joint, ur_elbow_joint, ur_wrist_1_joint, ur_wrist_2_joint, ur_wrist_3_joint]
+    position: [-2.7121172587024134, -2.0373547712909144, -2.2007129828082483, -0.46426374117006475, 1.6217271089553833, -0.7370694319354456]
+cnc_door_top_center:
+    name: [ur_shoulder_pan_joint, ur_shoulder_lift_joint, ur_elbow_joint, ur_wrist_1_joint, ur_wrist_2_joint, ur_wrist_3_joint]
+    position: [-4.672133509312765, -1.8228238264666956, -1.6194685141192835, 0.24915874004364014, 1.5868656635284424, -2.842545811329977]
+
+
+
