@@ -46,10 +46,10 @@
   </joint>
 
   <!-- Robotiq Gripper -->
-  <xacro:include filename="$(find robotiq_s_model_visualization)/cfg/s-model_mesh_macro.xacro" />
-  <xacro:s-model_mesh  prefix=""/>
+  <xacro:include filename="$(find robotiq_s_model_visualization)/cfg/s-model_articulated_macro.xacro" />
+  <xacro:s-model_articulated prefix=""/>
   <joint name="EEjoint" type ="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.160"/>
+    <origin rpy="1.571 0 0" xyz="0 0 0.04"/>
     <parent link="ur_tool0"/>
     <child link="palm"/>
   </joint>
