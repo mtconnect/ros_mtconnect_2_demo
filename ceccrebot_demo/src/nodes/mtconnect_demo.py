@@ -40,8 +40,8 @@ class RobotInterface:
         },
         'cmm': {
              'default': {
-                 'in': ['waypoint', 'waypoint2', 'waypoint3', 'pregrasp'],
-                 'out': ['pregrasp', 'waypoint3', 'waypoint2', 'waypoint'],
+                 'in': ['waypoint', 'waypoint3', 'pregrasp'],
+                 'out': ['pregrasp', 'waypoint3', 'waypoint'],
              },
         },
         'conv': {
@@ -76,8 +76,8 @@ class RobotInterface:
         },
         'cnctool': {
             'default': {
-                'in': ['pregrasp'],
-                'out': ['pregrasp'],
+                'in': ['waypoint', 'door', 'door2', 'pregrasp'],
+                'out': ['pregrasp', 'door2', 'door', 'waypoint'],
             },
         },
     }
@@ -97,7 +97,7 @@ class RobotInterface:
 
     def move_sequence(self, targets):
         for target in targets:
-            if not self.try_work('move', target)
+            if not self.try_work('move', target):
                 return False
         return True
 
