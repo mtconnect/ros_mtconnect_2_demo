@@ -34,49 +34,49 @@ class RobotInterface:
     POINTS = {
         'cnc': {
             'default': {
-                'in': ['waypoint', 'door', 'door2', 'pregrasp', 'grasp'],
+                'in': ['waypoint', 'door', 'door2', 'pregrasp'],
                 'out': ['pregrasp', 'door2', 'door', 'waypoint'],
             },
         },
         'cmm': {
              'default': {
-                 'in': ['waypoint', 'waypoint2', 'waypoint3', 'pregrasp', 'grasp'],
+                 'in': ['waypoint', 'waypoint2', 'waypoint3', 'pregrasp'],
                  'out': ['pregrasp', 'waypoint3', 'waypoint2', 'waypoint'],
              },
         },
         'conv': {
             'good': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
             'bad': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
             'rework': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
             'default': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
         },
         'buff': {
             'default': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
         },
         'tool': {
             'default': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
         },
         'cnctool': {
             'default': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
         },
@@ -111,11 +111,19 @@ class RobotInterface:
         device_targets = [loc + '_' + dest + '_' + target for target in move_targets]
         return self.move_sequence(device_targets) and self.move_home()
 
-    def grab(self, data):
+    def grab(self, device, dest):
+        loc = map_device_name(device)
+        dest = map_device_destination(loc, dest)
+        prefix = loc + '_' + dest + '_'
+        self._bridge.do_work('move', prefix + 'pick')
         self._bridge.do_work('gripper', 'close')
         return True
 
-    def release(self, data):
+    def release(self, device, dest):
+        loc = map_device_name(device)
+        dest = map_device_destination(loc, dest)
+        prefix = loc + '_' + dest + '_'
+        self._bridge.do_work('move', prefix + 'place')
         self._bridge.do_work('gripper', 'open')
         return True
 
