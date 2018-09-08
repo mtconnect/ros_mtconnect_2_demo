@@ -85,14 +85,25 @@ class RobotInterface:
     def __init__(self):
         self._bridge = mtconnect_bridge.Bridge()
 
+    def try_work(self, action, data):
+        rospy.loginfo("Doing work: {} - {}".format(str(action), str(data)))
+        try:
+            self._bridge.do_work(action, data)
+        except mtconnect_bridge.MTConnectBridgeException as e:
+            rospy.logerr("    failed: " + str(e))
+            return False
+        rospy.loginfo("    success")
+        return True
+
     def move_sequence(self, targets):
         for target in targets:
-            rospy.loginfo("Moving to '{}'".format(target))
-            self._bridge.do_work('move', target)
+            if not self.try_work('move', target)
+                return False
         return True
 
     def move_home(self):
-        self._bridge.do_work('move', 'home')
+        if not self.try_work('move', 'home'):
+            return False
         return True
 
     def move_in(self, device, dest):
@@ -115,16 +126,18 @@ class RobotInterface:
         loc = map_device_name(device)
         dest = map_device_destination(loc, dest)
         prefix = loc + '_' + dest + '_'
-        self._bridge.do_work('move', prefix + 'pick')
-        self._bridge.do_work('gripper', 'close')
+
+        if not (self.try_work('move', prefix + 'pick') and self.try_work('gripper', 'close')):
+            return False
         return True
 
     def release(self, device, dest):
         loc = map_device_name(device)
         dest = map_device_destination(loc, dest)
         prefix = loc + '_' + dest + '_'
-        self._bridge.do_work('move', prefix + 'place')
-        self._bridge.do_work('gripper', 'open')
+
+        if not (self.try_work('move', prefix + 'place') and self.try_work('gripper', 'open')):
+            return False
         return True
 
 def run_simulated_demo(robot):
@@ -195,9 +208,7 @@ def main():
     if sim:
         run_simulated_demo(robot_interface)
     else:
-        rospy.loginfo("In dir: " + os.getcwd())
         os.chdir(os.path.join(os.getenv("HOME"), "catkin_ws/src/ceccrebot/simulator/src"))
-        rospy.loginfo("In dir: " + os.getcwd())
 
         host = rospy.get_param('~host')
         port = rospy.get_param('~port')
