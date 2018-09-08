@@ -19,7 +19,7 @@ def map_device_name(dev):
     elif dev == 'b1':
         return 'buff'
     elif dev == 't1':
-        return 'tool'
+        return 'tabletool'
     elif dev == 'cnc1_t1':
         return 'cnctool'
 
@@ -68,7 +68,7 @@ class RobotInterface:
                 'out': ['pregrasp'],
             },
         },
-        'tool': {
+        'tabletool': {
             'default': {
                 'in': ['pregrasp'],
                 'out': ['pregrasp'],
