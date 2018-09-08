@@ -72,6 +72,26 @@ void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string,
   }
 }
 
+void ceccrebot_demo::loadPayloads(XmlRpc::XmlRpcValue &param, std::map<std::string, Payload> &payloads)
+{
+  try
+  {
+    for (auto it = param.begin(); it != param.end(); ++it)
+    {
+      std::string name = it->first;
+      XmlRpc::XmlRpcValue values = it->second;
+
+      payloads[name] = Payload{values["mass"], {values["cog"]["x"], values["cog"]["y"], values["cog"]["z"]}};
+
+      ROS_INFO("Loaded payload '%s', mass: %f, cog_z: %f", name.c_str(), payloads[name].mass, payloads[name].cog[2]);
+    }
+  }
+  catch (XmlRpc::XmlRpcException &ex)
+  {
+    throw std::runtime_error("XmlRpc error: " + ex.getMessage());
+  }
+}
+
 ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   mtconnect_server_(MTCONNECT_WORK_ACTION, false),
   curr_work_(nullptr)
@@ -90,6 +110,11 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   if (! nhp.getParam("poses", poses_param))
     throw std::runtime_error("Required parameter 'poses' not found");
   loadPoses(poses_param, robot_poses_);
+
+  XmlRpc::XmlRpcValue payloads_param;
+  if (! nhp.getParam("payloads", payloads_param))
+    throw std::runtime_error("Required parameter 'payloads' not found");
+  loadPayloads(payloads_param, robot_payloads_);
 
   //direct URScript interface
   robot_raw_interface_ = nh.advertise<std_msgs::String>("ur_driver/URScript", 10);
@@ -238,6 +263,15 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     {
       ROS_INFO("Gripper opened");
     }
+
+    if (robot_payloads_.count("none") > 0)
+    {
+      setPayload(robot_payloads_["none"]);
+    }
+    else
+    {
+      ROS_WARN_STREAM("No payload data available for 'none'");
+    }
   }
   else if (cmd == "close")
   {
@@ -255,6 +289,15 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     else
     {
       ROS_INFO("Gripper closed");
+    }
+
+    if (robot_payloads_.count("part") > 0)
+    {
+      setPayload(robot_payloads_["part"]);
+    }
+    else
+    {
+      ROS_WARN_STREAM("No payload data available for 'part'");
     }
   }
   else
@@ -378,6 +421,19 @@ void ceccrebot_demo::Demo::place(const std::vector<geometry_msgs::PoseStamped>& 
       cmd_gripper("open");
     }
   }
+}
+
+void ceccrebot_demo::Demo::setPayload(const Payload &payload) const
+{
+  auto fmt = boost::format("set_payload(%f, [%f, %f, %f])") %
+    payload.mass %
+    payload.cog[0] %
+    payload.cog[1] %
+    payload.cog[2];
+
+  std_msgs::String msg;
+  msg.data = fmt.str();
+  robot_raw_interface_.publish(msg);
 }
 
 /**
