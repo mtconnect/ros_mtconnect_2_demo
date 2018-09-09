@@ -50,6 +50,12 @@ struct Config
   double planning_time = 10.0; //seconds
 };
 
+struct PositionAndSpeed
+{
+  JointPose position;
+  double speed_factor;
+};
+
 struct Payload
 {
   double mass;
@@ -57,7 +63,7 @@ struct Payload
 };
 
 bool loadConfig(ros::NodeHandle &nh, Config &cfg);
-void loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, JointPose> &robot_poses);
+void loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, PositionAndSpeed> &robot_poses);
 void loadPayloads(XmlRpc::XmlRpcValue &param, std::map<std::string, Payload> &payloads);
 
 class Demo
@@ -106,7 +112,7 @@ private:
   ros::ServiceClient gripper_close_srv_;
 
   MoveGroupPtr move_group_ptr_;
-  std::map<std::string, JointPose> robot_poses_;
+  std::map<std::string, PositionAndSpeed> robot_poses_;
   std::map<std::string, Payload> robot_payloads_;
 
   tf::TransformBroadcaster tf_broadcaster_;
