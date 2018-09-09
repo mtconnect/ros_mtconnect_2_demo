@@ -1,0 +1,34 @@
+#!/usr/bin/python
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import rospy
+import sensor_msgs.msg
+
+JOINTS_TOPIC = 'ur/joint_states'
+JOINT_NAMES = [
+    'ur_shoulder_pan_joint',
+    'ur_shoulder_lift_joint',
+    'ur_elbow_joint',
+    'ur_wrist_1_joint',
+    'ur_wrist_2_joint',
+    'ur_wrist_3_joint',
+    ]
+
+def joints_cb(msg):
+    indexes = [msg.name.index(joint) for joint in JOINT_NAMES]
+    vals = [msg.position[idx] for idx in indexes]
+    deg_vals = [val*180.0/3.141592 for val in vals]
+    print(formatstr(deg_vals))
+
+def formatstr(vals):
+    strvals = ['{:.2f}'.format(val) for val in vals]
+    return '[' + ', '.join(strvals) + ']'
+
+def main():
+    rospy.init_node('grab_position', anonymous=True)
+
+    sub = rospy.Subscriber(JOINTS_TOPIC, sensor_msgs.msg.JointState, joints_cb)
+    rospy.spin()
+
+if __name__ == '__main__':
+    main()

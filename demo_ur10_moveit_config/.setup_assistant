@@ -8,4 +8,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: Matthew Powelson
     author_email: matthew.powelson@swri.org
-    generated_timestamp: 1531852829
+    generated_timestamp: 1536360251

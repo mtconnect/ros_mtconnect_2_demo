@@ -47,12 +47,30 @@
     <child link="ur_base_link"/>
   </joint>
 
-  <!-- Robotiq Gripper -->
-  <xacro:include filename="$(find robotiq_s_model_visualization)/cfg/s-model_mesh_macro.xacro" />
-  <xacro:s-model_mesh  prefix=""/>
-  <joint name="EEjoint" type ="fixed">
-    <origin rpy="0 0 -0.4" xyz="0 0 0.160"/>
+  <link name="ur_gripper_adapter_link">
+    <visual>
+      <origin xyz="0 0 -0.015"/>
+      <geometry>
+          <cylinder radius="0.04" length="0.03"/>
+      </geometry>
+      <material name="darkblue">
+        <color rgba="0.4 0.4 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="gripper_adapter_joint" type="fixed">
+    <origin xyz="0 0 0.03" rpy="0 0 0"/>
     <parent link="ur_tool0"/>
+    <child link="ur_gripper_adapter_link"/>
+  </joint>
+
+  <!-- Robotiq Gripper -->
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/robotiq/s-model_articulated_macro.xacro" />
+  <xacro:s-model_articulated prefix=""/>
+  <joint name="EEjoint" type ="fixed">
+    <origin rpy="1.571 0 -0.4" xyz="0 0 0.04"/>
+    <parent link="ur_gripper_adapter_link"/>
     <child link="palm"/>
   </joint>
 
