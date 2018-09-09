@@ -38,7 +38,7 @@ bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg
   return true;
 }
 
-void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, JointPose> &robot_poses)
+void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, PositionAndSpeed> &robot_poses)
 {
   try
   {
@@ -52,7 +52,7 @@ void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string,
     for (auto it = positions_param.begin(); it != positions_param.end(); ++it)
     {
       std::string pose_name = it->first;
-      XmlRpc::XmlRpcValue joint_values = it->second;
+      XmlRpc::XmlRpcValue joint_values = it->second["position"];
 
       if (joint_names.size() != joint_values.size())
         throw std::runtime_error(
@@ -63,7 +63,12 @@ void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string,
       {
         pose[joint_names[i]] = deg_to_rad(joint_values[i]);
       }
-      robot_poses[pose_name] = pose;
+
+      PositionAndSpeed pose_and_speed;
+      pose_and_speed.position = pose;
+      pose_and_speed.speed_factor = it->second["speed_factor"];
+
+      robot_poses[pose_name] = pose_and_speed;
     }
   }
   catch (XmlRpc::XmlRpcException &ex)
@@ -185,15 +190,14 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   if (robot_poses_.count(pose_name) == 0)
     throw std::runtime_error("Move target '" + pose_name + "' is unknown");
 
-  move_group_ptr_->setJointValueTarget(robot_poses_[pose_name]);
+  PositionAndSpeed & pose_info = robot_poses_[pose_name];
+
+  move_group_ptr_->setJointValueTarget(pose_info.position);
   move_group_ptr_->setPlanningTime(cfg_.planning_time);
-
-  //bool success = (bool) move_group_ptr_->move();
-
-  // Create new plan
-  moveit::planning_interface::MoveGroupInterface::Plan plan;
+  move_group_ptr_->setMaxVelocityScalingFactor(pose_info.speed_factor);
 
   // Plan to pose_name
+  moveit::planning_interface::MoveGroupInterface::Plan plan;
   bool plan_success = (bool) move_group_ptr_->plan(plan);
   if(!plan_success)   throw std::runtime_error("Failed to plan to " + pose_name);
 
