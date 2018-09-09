@@ -20,6 +20,7 @@ limitations under the License.
 #include <std_msgs/String.h>
 #include <std_srvs/Trigger.h>
 #include <xmlrpcpp/XmlRpcException.h>
+#include <yaml-cpp/yaml.h>
 
 static const std::string MTCONNECT_WORK_ACTION = "work";
 static const std::string GRIPPER_OPEN_SERVICE = "gripper_open";
@@ -72,6 +73,26 @@ void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string,
   }
 }
 
+void ceccrebot_demo::loadPayloads(XmlRpc::XmlRpcValue &param, std::map<std::string, Payload> &payloads)
+{
+  try
+  {
+    for (auto it = param.begin(); it != param.end(); ++it)
+    {
+      std::string name = it->first;
+      XmlRpc::XmlRpcValue values = it->second;
+
+      payloads[name] = Payload{values["mass"], {values["cog"]["x"], values["cog"]["y"], values["cog"]["z"]}};
+
+      ROS_INFO("Loaded payload '%s', mass: %f, cog_z: %f", name.c_str(), payloads[name].mass, payloads[name].cog[2]);
+    }
+  }
+  catch (XmlRpc::XmlRpcException &ex)
+  {
+    throw std::runtime_error("XmlRpc error: " + ex.getMessage());
+  }
+}
+
 ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   mtconnect_server_(MTCONNECT_WORK_ACTION, false),
   curr_work_(nullptr)
@@ -90,6 +111,11 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   if (! nhp.getParam("poses", poses_param))
     throw std::runtime_error("Required parameter 'poses' not found");
   loadPoses(poses_param, robot_poses_);
+
+  XmlRpc::XmlRpcValue payloads_param;
+  if (! nhp.getParam("payloads", payloads_param))
+    throw std::runtime_error("Required parameter 'payloads' not found");
+  loadPayloads(payloads_param, robot_payloads_);
 
   //direct URScript interface
   robot_raw_interface_ = nh.advertise<std_msgs::String>("ur_driver/URScript", 10);
@@ -219,11 +245,42 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   }
 }
 
-void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
+void ceccrebot_demo::Demo::cmd_gripper(const std::string &data)
 {
-  if (cmd == "open")
+  std::istringstream ss(data);
+
+  /*
+  YAML::Node data_node = YAML::Load(data);
+  if (! data_node.IsMap())
+    throw std::runtime_error("Gripper work data is not a valid YAML map: " + data);
+  */
+
+  std::string action;
+  ss >> action;
+  /*
+  if (data_node["action"])
+    action = data_node.as<std::string>();
+  else
+    throw std::runtime_error("Gripper work data missing expected 'action' item: " + data);
+  */
+
+  std::string payload;
+  ss >> payload;
+  /*
+  if (data_node["payload"])
+    payload = data_node.as<std::string>();
+  else
+    throw std::runtime_error("Gripper work data missing expected 'payload' item: " + data);
+  */
+  ROS_INFO_STREAM("Gripper action=" << action << ", payload=" << payload);
+
+  if (action == "open")
   {
     std_srvs::Trigger srv_data;
+    if (! gripper_open_srv_.exists())
+    {
+      throw std::runtime_error("Gripper open not available");
+    }
     if (! gripper_open_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper open failed for an unknown reason");
@@ -238,10 +295,23 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     {
       ROS_INFO("Gripper opened");
     }
+
+    if (robot_payloads_.count("none") > 0)
+    {
+      setPayload(robot_payloads_["none"]);
+    }
+    else
+    {
+      ROS_WARN_STREAM("No payload data available for 'none'");
+    }
   }
-  else if (cmd == "close")
+  else if (action == "close")
   {
     std_srvs::Trigger srv_data;
+    if (! gripper_close_srv_.exists())
+    {
+      throw std::runtime_error("Gripper close not available");
+    }
     if (! gripper_close_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper close failed for an unknown reason");
@@ -256,11 +326,20 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     {
       ROS_INFO("Gripper closed");
     }
+
+    if (robot_payloads_.count(payload) > 0)
+    {
+      setPayload(robot_payloads_[payload]);
+    }
+    else
+    {
+      ROS_WARN_STREAM("No payload data available for '" << payload << "'");
+    }
   }
   else
   {
     std::ostringstream ss;
-    ss << "Unrecognized gripper command data: " << cmd;
+    ss << "Unrecognized gripper command data: " << action;
     throw std::runtime_error(ss.str());
   }
 }
@@ -378,6 +457,19 @@ void ceccrebot_demo::Demo::place(const std::vector<geometry_msgs::PoseStamped>& 
       cmd_gripper("open");
     }
   }
+}
+
+void ceccrebot_demo::Demo::setPayload(const Payload &payload) const
+{
+  auto fmt = boost::format("set_payload(%f, [%f, %f, %f])") %
+    payload.mass %
+    payload.cog[0] %
+    payload.cog[1] %
+    payload.cog[2];
+
+  std_msgs::String msg;
+  msg.data = fmt.str();
+  robot_raw_interface_.publish(msg);
 }
 
 /**

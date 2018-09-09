@@ -1,0 +1,18 @@
+none:
+  mass: 2.5
+  cog:
+    x: 0.0
+    y: 0.0
+    z: 0.1
+part:
+  mass: 3.5
+  cog:
+    x: 0.0
+    y: 0.0
+    z: 0.15
+tool:
+  mass: 5.0
+  cog:
+    x: 0.0
+    y: 0.0
+    z: 0.2
