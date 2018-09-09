@@ -20,6 +20,7 @@ limitations under the License.
 #include <std_msgs/String.h>
 #include <std_srvs/Trigger.h>
 #include <xmlrpcpp/XmlRpcException.h>
+#include <yaml-cpp/yaml.h>
 
 static const std::string MTCONNECT_WORK_ACTION = "work";
 static const std::string GRIPPER_OPEN_SERVICE = "gripper_open";
@@ -244,11 +245,42 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   }
 }
 
-void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
+void ceccrebot_demo::Demo::cmd_gripper(const std::string &data)
 {
-  if (cmd == "open")
+  std::istringstream ss(data);
+
+  /*
+  YAML::Node data_node = YAML::Load(data);
+  if (! data_node.IsMap())
+    throw std::runtime_error("Gripper work data is not a valid YAML map: " + data);
+  */
+
+  std::string action;
+  ss >> action;
+  /*
+  if (data_node["action"])
+    action = data_node.as<std::string>();
+  else
+    throw std::runtime_error("Gripper work data missing expected 'action' item: " + data);
+  */
+
+  std::string payload;
+  ss >> payload;
+  /*
+  if (data_node["payload"])
+    payload = data_node.as<std::string>();
+  else
+    throw std::runtime_error("Gripper work data missing expected 'payload' item: " + data);
+  */
+  ROS_INFO_STREAM("Gripper action=" << action << ", payload=" << payload);
+
+  if (action == "open")
   {
     std_srvs::Trigger srv_data;
+    if (! gripper_open_srv_.exists())
+    {
+      throw std::runtime_error("Gripper open not available");
+    }
     if (! gripper_open_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper open failed for an unknown reason");
@@ -273,9 +305,13 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
       ROS_WARN_STREAM("No payload data available for 'none'");
     }
   }
-  else if (cmd == "close")
+  else if (action == "close")
   {
     std_srvs::Trigger srv_data;
+    if (! gripper_close_srv_.exists())
+    {
+      throw std::runtime_error("Gripper close not available");
+    }
     if (! gripper_close_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper close failed for an unknown reason");
@@ -291,19 +327,19 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
       ROS_INFO("Gripper closed");
     }
 
-    if (robot_payloads_.count("part") > 0)
+    if (robot_payloads_.count(payload) > 0)
     {
-      setPayload(robot_payloads_["part"]);
+      setPayload(robot_payloads_[payload]);
     }
     else
     {
-      ROS_WARN_STREAM("No payload data available for 'part'");
+      ROS_WARN_STREAM("No payload data available for '" << payload << "'");
     }
   }
   else
   {
     std::ostringstream ss;
-    ss << "Unrecognized gripper command data: " << cmd;
+    ss << "Unrecognized gripper command data: " << action;
     throw std::runtime_error(ss.str());
   }
 }

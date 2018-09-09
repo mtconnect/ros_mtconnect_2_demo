@@ -23,7 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 find_package(Eigen3 REQUIRED)
-
+find_package(yaml-cpp REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -164,6 +164,7 @@ add_executable(gripper_control_node
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
 )
 
 target_link_libraries(gripper_control_node
