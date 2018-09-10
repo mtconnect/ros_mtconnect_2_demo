@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur10">
-  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro" />
   <xacro:include filename="$(find ceccrebot_demo_support)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/ur10.urdf.xacro" />
 
@@ -18,9 +18,9 @@
   </xacro:platform>
 
   <!-- Part table -->
-  <xacro:platform name="part_table" parent_link="${root_frame_id}" length="1.016" width="0.610" height="${table_height}" material="light_gray">
+  <xacro:part_table name="part_table" parent_link="${root_frame_id}" length="1.016" width="0.610" height="${table_height}">
       <origin xyz="-0.345 0.788	 ${table_height}" rpy="0 0 0"/>
-  </xacro:platform>
+  </xacro:part_table>
 
   <!-- CNC -->
   <xacro:cnc_VM5i id="A" parent_link="${root_frame_id}">

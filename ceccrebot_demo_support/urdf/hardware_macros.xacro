@@ -25,6 +25,102 @@
     </joint>
   </xacro:macro>
 
+  <xacro:macro name="part_table" params="name parent_link length width height *location">
+    <link name="${name}_platform_link">
+      <!-- Main blue body -->
+      <visual>
+        <origin xyz="0.0 0.0 -0.457" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.635 0.457 0.711"/>
+        </geometry>
+        <material name="teal_blue"/>
+      </visual>
+      <!-- Left gray panel -->
+      <visual>
+        <origin xyz="-0.3365 0.0 -0.546" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.038 0.508 0.940"/>
+        </geometry>
+        <material name="light_gray">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Right gray panel -->
+      <visual>
+        <origin xyz="0.3365 0.0 -0.546" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.038 0.508 0.940"/>
+        </geometry>
+        <material name="light_gray">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Glass surface -->
+      <visual>
+        <origin xyz="0.0 -0.05 -0.006" rpy="0 0 0"/>
+        <geometry>
+          <box size="1.016 0.610 0.012"/>
+        </geometry>
+        <material name="glass">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Front left steel post -->
+      <visual>
+        <origin xyz="-0.3365 -0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Front right steel post -->
+      <visual>
+        <origin xyz="0.3365 -0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Back left steel post -->
+      <visual>
+        <origin xyz="-0.3365 0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Back right steel post -->
+      <visual>
+        <origin xyz="0.3365 0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- One unified collision geometry -->
+      <collision name="{name}_platform">
+        <geometry>
+          <box size="${length} ${width} ${height}"/>
+        </geometry>
+        <origin xyz="0.0 0.0 -${height * 0.5}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_platform_joint" type ="fixed">
+      <xacro:insert_block name="location"/>
+      <parent link="${parent_link}"/>
+      <child link="${name}_platform_link"/>
+    </joint>
+  </xacro:macro>
+
   <!-- CNC -->
   <xacro:macro name="cnc" params="id parent_link *location">
     <link name="cnc_${id}_base">
