@@ -19,65 +19,71 @@ def map_device_name(dev):
     elif dev == 'b1':
         return 'buff'
     elif dev == 't1':
-        return 'tool'
+        return 'tabletool'
     elif dev == 'cnc1_t1':
         return 'cnctool'
 
 def map_device_destination(dev, dest):
     if dev != 'conv':
         dest = 'default'
-
     return dest
 
+def map_device_payload(dev):
+    if dev == 'cnctool':
+        return 'tool'
+    elif dev == 'tool':
+        return 'tool'
+    else:
+        return 'part'
 
 class RobotInterface:
     POINTS = {
         'cnc': {
             'default': {
-                'in': ['waypoint', 'door', 'pregrasp', 'grasp'],
-                'out': ['pregrasp', 'waypoint'],
+                'in': ['waypoint', 'door', 'door2', 'pregrasp'],
+                'out': ['pregrasp', 'door2', 'door', 'waypoint'],
             },
         },
         'cmm': {
              'default': {
-                 'in': ['waypoint', 'pregrasp', 'grasp'],
-                 'out': ['pregrasp', 'waypoint'],
+                 'in': ['waypoint', 'waypoint3', 'pregrasp'],
+                 'out': ['pregrasp', 'waypoint3', 'waypoint'],
              },
         },
         'conv': {
             'good': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
             'bad': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
             'rework': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
             'default': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
         },
         'buff': {
             'default': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
         },
-        'tool': {
+        'tabletool': {
             'default': {
-                'in': ['pregrasp', 'grasp'],
+                'in': ['pregrasp'],
                 'out': ['pregrasp'],
             },
         },
         'cnctool': {
             'default': {
-                'in': ['pregrasp', 'grasp'],
-                'out': ['pregrasp'],
+                'in': ['waypoint', 'door', 'door2', 'pregrasp'],
+                'out': ['pregrasp', 'door2', 'door', 'waypoint'],
             },
         },
     }
@@ -85,14 +91,25 @@ class RobotInterface:
     def __init__(self):
         self._bridge = mtconnect_bridge.Bridge()
 
+    def try_work(self, action, data):
+        rospy.loginfo("Doing work: {} - {}".format(str(action), str(data)))
+        try:
+            self._bridge.do_work(action, data)
+        except mtconnect_bridge.MTConnectBridgeException as e:
+            rospy.logerr("    failed: " + str(e))
+            return False
+        rospy.loginfo("    success")
+        return True
+
     def move_sequence(self, targets):
         for target in targets:
-            rospy.loginfo("Moving to '{}'".format(target))
-            self._bridge.do_work('move', target)
+            if not self.try_work('move', target):
+                return False
         return True
 
     def move_home(self):
-        self._bridge.do_work('move', 'home')
+        if not self.try_work('move', 'home'):
+            return False
         return True
 
     def move_in(self, device, dest):
@@ -111,38 +128,66 @@ class RobotInterface:
         device_targets = [loc + '_' + dest + '_' + target for target in move_targets]
         return self.move_sequence(device_targets) and self.move_home()
 
-    def grab(self, data):
-        self._bridge.do_work('gripper', 'close')
+    def grab(self, device, dest):
+        devname = map_device_name(device)
+        dest = map_device_destination(devname, dest)
+        payload = map_device_payload(devname)
+
+        prefix = devname + '_' + dest + '_'
+        data = "close {}".format(payload)
+
+        if not (self.try_work('move', prefix + 'pick') and self.try_work('gripper', data)):
+            return False
         return True
 
-    def release(self, data):
-        self._bridge.do_work('gripper', 'open')
+    def release(self, device, dest):
+        devname = map_device_name(device)
+        dest = map_device_destination(devname, dest)
+        payload = map_device_payload(devname)
+
+        prefix = devname + '_' + dest + '_'
+        data = "open {}".format(payload)
+
+        if not (self.try_work('move', prefix + 'place') and self.try_work('gripper', data)):
+            return False
         return True
 
 def run_simulated_demo(robot):
     robot.move_home()
 
     robot.move_in('cnc1', '')
-    robot.grab('')
+    robot.grab('cnc1')
     robot.move_out('cnc1', '')
 
+    robot.move_in('t1', '')
+    robot.grab('t1')
     rospy.sleep(3.0)
+    robot.move_out('t1', '')
 
     robot.move_in('cmm1', '')
-    robot.release('')
+    robot.release('cmm1')
+    rospy.sleep(3.0)
     robot.move_out('cmm1', '')
 
     rospy.sleep(3.0)
 
     robot.move_in('t1', '')
-    robot.grab('')
+    robot.grab('t1')
+    rospy.sleep(3.0)
     robot.move_out('t1', '')
 
     rospy.sleep(3.0)
+    robot.move_out('cmm1', '')
 
-    robot.move_in('b1', '')
-    robot.release('')
-    robot.move_out('b1', '')
+    robot.move_in('t1', '')
+    robot.release('t1')
+    rospy.sleep(3.0)
+    robot.move_out('t1', '')
+
+    robot.move_in('cnc1_t1', '')
+    robot.release('cnc1_t1')
+    rospy.sleep(3.0)
+    robot.move_out('cnc1_t1', '')
 
 def init():
     rospy.init_node('mtconnect_demo')
@@ -155,9 +200,7 @@ def main():
     if sim:
         run_simulated_demo(robot_interface)
     else:
-        rospy.loginfo("In dir: " + os.getcwd())
         os.chdir(os.path.join(os.getenv("HOME"), "catkin_ws/src/ceccrebot/simulator/src"))
-        rospy.loginfo("In dir: " + os.getcwd())
 
         host = rospy.get_param('~host')
         port = rospy.get_param('~port')

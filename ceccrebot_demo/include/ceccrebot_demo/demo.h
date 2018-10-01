@@ -13,8 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#ifndef __CECCREBOT_DEMO_DEMO_H__
-#define __CECCREBOT_DEMO_DEMO_H__
+#ifndef CECCREBOT_DEMO_DEMO_H
+#define CECCREBOT_DEMO_DEMO_H
 
 #include <condition_variable>
 #include <mutex>
@@ -50,8 +50,21 @@ struct Config
   double planning_time = 10.0; //seconds
 };
 
+struct PositionAndSpeed
+{
+  JointPose position;
+  double speed_factor;
+};
+
+struct Payload
+{
+  double mass;
+  std::array<double,3> cog;
+};
+
 bool loadConfig(ros::NodeHandle &nh, Config &cfg);
-void loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, JointPose> &robot_poses);
+void loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, PositionAndSpeed> &robot_poses);
+void loadPayloads(XmlRpc::XmlRpcValue &param, std::map<std::string, Payload> &payloads);
 
 class Demo
 {
@@ -75,6 +88,7 @@ protected:
 
   void cmd_gripper(const std::string &data);
   void stop_robot() const;
+  void setPayload(const Payload &payload) const;
 
   bool create_motion_plan(
       const geometry_msgs::PoseStamped &pose_target,
@@ -98,7 +112,8 @@ private:
   ros::ServiceClient gripper_close_srv_;
 
   MoveGroupPtr move_group_ptr_;
-  std::map<std::string, JointPose> robot_poses_;
+  std::map<std::string, PositionAndSpeed> robot_poses_;
+  std::map<std::string, Payload> robot_payloads_;
 
   tf::TransformBroadcaster tf_broadcaster_;
   tf::TransformListener tf_listener_;

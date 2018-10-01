@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur10">
-  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro" />
   <xacro:include filename="$(find ceccrebot_demo_support)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/ur10.urdf.xacro" />
 
   <xacro:property name="root_frame_id" value="world_frame"/>
   <xacro:property name="platform_thickness" value="1.0414"/>
-  <xacro:property name="table_height" value="1.045"/>
+  <xacro:property name="table_height" value="1.01"/>
 
   <!-- root link -->
   <link name="${root_frame_id}"/>
@@ -18,24 +18,26 @@
   </xacro:platform>
 
   <!-- Part table -->
-  <xacro:platform name="part_table" parent_link="${root_frame_id}" length="0.9144" width="0.762" height="${table_height}" material="light_gray">
-      <origin xyz="-0.525 0.69 ${table_height}" rpy="0 0 0"/>
-  </xacro:platform>
+  <xacro:part_table name="part_table" parent_link="${root_frame_id}" length="1.016" width="0.610" height="${table_height}">
+      <origin xyz="-0.345 0.788	 ${table_height}" rpy="0 0 0"/>
+  </xacro:part_table>
 
   <!-- CNC -->
   <xacro:cnc_VM5i id="A" parent_link="${root_frame_id}">
-    <origin xyz="0.75 -0.5 0.0" rpy="0 0 3.1415"/>
+    <origin xyz="0.60 -0.55 0.0" rpy="0 0 3.1415"/>
   </xacro:cnc_VM5i>
 
   <!-- CMM -->
   <xacro:cmm id="A" parent_link="${root_frame_id}">
-    <origin xyz="1.49 0.07 0.83" rpy="0 0 1.5708"/>
+    <origin xyz="1.68 0.15 0.815" rpy="0 0 1.5708"/>
   </xacro:cmm>
 
   <!-- Demo Parts -->
+  <!--
   <xacro:part id="1" parent_link="${root_frame_id}">
     <origin xyz="0.75 0.5 0.95 " rpy="0 0 -1.5708"/>
   </xacro:part>
+  -->
 
   <!-- Robot -->
   <xacro:ur10_robot prefix="ur_" joint_limited="true" elbow_joint_lower_limit="-2.6"/>
@@ -67,7 +69,7 @@
   <xacro:include filename="$(find ceccrebot_demo_support)/urdf/robotiq/s-model_articulated_macro.xacro" />
   <xacro:s-model_articulated prefix=""/>
   <joint name="EEjoint" type ="fixed">
-    <origin rpy="1.571 0 0" xyz="0 0 0.04"/>
+    <origin rpy="1.571 0 -0.4" xyz="0 0 0.04"/>
     <parent link="ur_gripper_adapter_link"/>
     <child link="palm"/>
   </joint>

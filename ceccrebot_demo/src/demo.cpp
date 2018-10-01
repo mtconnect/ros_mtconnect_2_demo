@@ -20,6 +20,7 @@ limitations under the License.
 #include <std_msgs/String.h>
 #include <std_srvs/Trigger.h>
 #include <xmlrpcpp/XmlRpcException.h>
+#include <yaml-cpp/yaml.h>
 
 static const std::string MTCONNECT_WORK_ACTION = "work";
 static const std::string GRIPPER_OPEN_SERVICE = "gripper_open";
@@ -38,7 +39,7 @@ bool ceccrebot_demo::loadConfig(ros::NodeHandle &nh, ceccrebot_demo::Config &cfg
   return true;
 }
 
-void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, JointPose> &robot_poses)
+void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string, PositionAndSpeed> &robot_poses)
 {
   try
   {
@@ -52,7 +53,7 @@ void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string,
     for (auto it = positions_param.begin(); it != positions_param.end(); ++it)
     {
       std::string pose_name = it->first;
-      XmlRpc::XmlRpcValue joint_values = it->second;
+      XmlRpc::XmlRpcValue joint_values = it->second["position"];
 
       if (joint_names.size() != joint_values.size())
         throw std::runtime_error(
@@ -63,7 +64,32 @@ void ceccrebot_demo::loadPoses(XmlRpc::XmlRpcValue &param, std::map<std::string,
       {
         pose[joint_names[i]] = deg_to_rad(joint_values[i]);
       }
-      robot_poses[pose_name] = pose;
+
+      PositionAndSpeed pose_and_speed;
+      pose_and_speed.position = pose;
+      pose_and_speed.speed_factor = it->second["speed_factor"];
+
+      robot_poses[pose_name] = pose_and_speed;
+    }
+  }
+  catch (XmlRpc::XmlRpcException &ex)
+  {
+    throw std::runtime_error("XmlRpc error: " + ex.getMessage());
+  }
+}
+
+void ceccrebot_demo::loadPayloads(XmlRpc::XmlRpcValue &param, std::map<std::string, Payload> &payloads)
+{
+  try
+  {
+    for (auto it = param.begin(); it != param.end(); ++it)
+    {
+      std::string name = it->first;
+      XmlRpc::XmlRpcValue values = it->second;
+
+      payloads[name] = Payload{values["mass"], {values["cog"]["x"], values["cog"]["y"], values["cog"]["z"]}};
+
+      ROS_INFO("Loaded payload '%s', mass: %f, cog_z: %f", name.c_str(), payloads[name].mass, payloads[name].cog[2]);
     }
   }
   catch (XmlRpc::XmlRpcException &ex)
@@ -90,6 +116,11 @@ ceccrebot_demo::Demo::Demo(ros::NodeHandle &nh, ros::NodeHandle &nhp) :
   if (! nhp.getParam("poses", poses_param))
     throw std::runtime_error("Required parameter 'poses' not found");
   loadPoses(poses_param, robot_poses_);
+
+  XmlRpc::XmlRpcValue payloads_param;
+  if (! nhp.getParam("payloads", payloads_param))
+    throw std::runtime_error("Required parameter 'payloads' not found");
+  loadPayloads(payloads_param, robot_payloads_);
 
   //direct URScript interface
   robot_raw_interface_ = nh.advertise<std_msgs::String>("ur_driver/URScript", 10);
@@ -185,20 +216,23 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   if (robot_poses_.count(pose_name) == 0)
     throw std::runtime_error("Move target '" + pose_name + "' is unknown");
 
-  move_group_ptr_->setJointValueTarget(robot_poses_[pose_name]);
+  PositionAndSpeed & pose_info = robot_poses_[pose_name];
+
+  move_group_ptr_->setJointValueTarget(pose_info.position);
   move_group_ptr_->setPlanningTime(cfg_.planning_time);
-
-  //bool success = (bool) move_group_ptr_->move();
-
-  // Create new plan
-  moveit::planning_interface::MoveGroupInterface::Plan plan;
+  move_group_ptr_->setMaxVelocityScalingFactor(pose_info.speed_factor);
 
   // Plan to pose_name
+  moveit::planning_interface::MoveGroupInterface::Plan plan;
   bool plan_success = (bool) move_group_ptr_->plan(plan);
   if(!plan_success)   throw std::runtime_error("Failed to plan to " + pose_name);
 
   // Modify plan
   ros::Duration settle_time(0.25);     // Amount of time added to trajectory for arm to stop
+  plan.trajectory_.joint_trajectory.points.push_back(plan.trajectory_.joint_trajectory.points.back());
+  plan.trajectory_.joint_trajectory.points.back().time_from_start += settle_time;
+
+//  ros::Duration settle_time(0.25);     // Amount of time added to trajectory for arm to stop
   plan.trajectory_.joint_trajectory.points.push_back(plan.trajectory_.joint_trajectory.points.back());
   plan.trajectory_.joint_trajectory.points.back().time_from_start += settle_time;
 
@@ -215,11 +249,42 @@ void ceccrebot_demo::Demo::go_to_pose(const std::string &pose_name)
   }
 }
 
-void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
+void ceccrebot_demo::Demo::cmd_gripper(const std::string &data)
 {
-  if (cmd == "open")
+  std::istringstream ss(data);
+
+  /*
+  YAML::Node data_node = YAML::Load(data);
+  if (! data_node.IsMap())
+    throw std::runtime_error("Gripper work data is not a valid YAML map: " + data);
+  */
+
+  std::string action;
+  ss >> action;
+  /*
+  if (data_node["action"])
+    action = data_node.as<std::string>();
+  else
+    throw std::runtime_error("Gripper work data missing expected 'action' item: " + data);
+  */
+
+  std::string payload;
+  ss >> payload;
+  /*
+  if (data_node["payload"])
+    payload = data_node.as<std::string>();
+  else
+    throw std::runtime_error("Gripper work data missing expected 'payload' item: " + data);
+  */
+  ROS_INFO_STREAM("Gripper action=" << action << ", payload=" << payload);
+
+  if (action == "open")
   {
     std_srvs::Trigger srv_data;
+    if (! gripper_open_srv_.exists())
+    {
+      throw std::runtime_error("Gripper open not available");
+    }
     if (! gripper_open_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper open failed for an unknown reason");
@@ -234,10 +299,23 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     {
       ROS_INFO("Gripper opened");
     }
+
+    if (robot_payloads_.count("none") > 0)
+    {
+      setPayload(robot_payloads_["none"]);
+    }
+    else
+    {
+      ROS_WARN_STREAM("No payload data available for 'none'");
+    }
   }
-  else if (cmd == "close")
+  else if (action == "close")
   {
     std_srvs::Trigger srv_data;
+    if (! gripper_close_srv_.exists())
+    {
+      throw std::runtime_error("Gripper close not available");
+    }
     if (! gripper_close_srv_.call(srv_data))
     {
       throw std::runtime_error("Gripper close failed for an unknown reason");
@@ -252,11 +330,20 @@ void ceccrebot_demo::Demo::cmd_gripper(const std::string &cmd)
     {
       ROS_INFO("Gripper closed");
     }
+
+    if (robot_payloads_.count(payload) > 0)
+    {
+      setPayload(robot_payloads_[payload]);
+    }
+    else
+    {
+      ROS_WARN_STREAM("No payload data available for '" << payload << "'");
+    }
   }
   else
   {
     std::ostringstream ss;
-    ss << "Unrecognized gripper command data: " << cmd;
+    ss << "Unrecognized gripper command data: " << action;
     throw std::runtime_error(ss.str());
   }
 }
@@ -374,6 +461,19 @@ void ceccrebot_demo::Demo::place(const std::vector<geometry_msgs::PoseStamped>& 
       cmd_gripper("open");
     }
   }
+}
+
+void ceccrebot_demo::Demo::setPayload(const Payload &payload) const
+{
+  auto fmt = boost::format("set_payload(%f, [%f, %f, %f])") %
+    payload.mass %
+    payload.cog[0] %
+    payload.cog[1] %
+    payload.cog[2];
+
+  std_msgs::String msg;
+  msg.data = fmt.str();
+  robot_raw_interface_.publish(msg);
 }
 
 /**

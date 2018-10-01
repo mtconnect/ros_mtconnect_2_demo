@@ -4,7 +4,7 @@
   <arg name="ns" default="ur"/>
   <arg name="activate" default="True" />
   <arg name="slave_number" default="1" />
-  <arg name="ifname" default="enx00051bb16fd7"/>
+  <arg name="ifname" default="enp9s0"/>
 
   <group ns="$(arg ns)" unless="$(arg sim)">
       <param name="ifname" value="$(arg ifname)"/>
