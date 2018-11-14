@@ -86,7 +86,7 @@ There are a bunch of ROS packages that need to be identified as explicit depende
 
 If the build fails and then the respective ROS package/s (dependencies) must be manually installed as needed. When the compilation fails, scroll up the terminal until the first error is seen(red text). If it says something like  `cannot find industrial_coreConfig.cmake`, it means that is a missing ROS package. Run 
 
-	`sudo apt-get install ros-kinetic-package-name`
+`sudo apt-get install ros-kinetic-package-name`
 
 to fix, where package-name is whatever appears in the error (e.g., "industrial_core"). Note the switch from underscores to hyphens from the ROS package name to the Ubuntu package name.
 
@@ -95,13 +95,13 @@ to fix, where package-name is whatever appears in the error (e.g., "industrial_c
 
 With an open terminal anywhere under the root directory of the workspace, run catkin build. Fix errors about any missing system dependencies that are not ROS packages by:
 
-    `catkin clean`
+`catkin clean`
 
 Note:  If robotiq/robot_s_mode_control gives problems. Try the following:
 
-    `cd src/robotiq/robot_s_model_control`
-    `catkin build --this`
-    `catkin build`
+`cd src/robotiq/robot_s_model_control`
+`catkin build --this`
+`catkin build`
 
 
 ## Setup ROS environment
@@ -120,8 +120,8 @@ To check that the current terminal environment is correct, run `roscd` and see i
 ## Check Environment
 In a new terminal with an environment pointing to the project workspace (i.e. with the project's setup.bash file sources as discussed above), run one of the following:
 
-	`roslaunch ceccrebot_demo_support single_robot_demo.launch`
-    `roslaunch ceccrebot_demo_support multi_robot_demo.launch`
+`roslaunch ceccrebot_demo_support single_robot_demo.launch`
+`roslaunch ceccrebot_demo_support multi_robot_demo.launch`
 
 This launches a graphical environment to show the a (kinematically) simulated robot and an example workcell. If RViz starts up and a 3D visualization of a robot and other hardware is seen, everything is good to go.
 
@@ -227,7 +227,7 @@ For launching live demo, two terminals will be neeeded. Both should have the ROS
     
     `sudo su --preserve-environment`
     
-    `roslaunch ceccrebot_demo_support robotiq_gripper.launch
+    `roslaunch ceccrebot_demo_support robotiq_gripper.launch`
 
 2. Launch startup script
     
