@@ -200,7 +200,7 @@ def main():
     if sim:
         run_simulated_demo(robot_interface)
     else:
-        os.chdir(os.path.join(os.getenv("HOME"), "catkin_ws/src/ceccrebot/simulator/src"))
+        os.chdir(os.path.join(os.getenv("HOME"), "catkin_workspace/src/ros_mtconnect_2/simulator/src"))
 
         host = rospy.get_param('~host')
         port = rospy.get_param('~port')
