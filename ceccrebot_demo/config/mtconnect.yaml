@@ -1,0 +1,6 @@
+host: localhost
+port: 7996
+actions:
+    - move
+    - grab
+    - release

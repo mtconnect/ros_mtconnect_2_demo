@@ -1,0 +1,11 @@
+controller_list:
+  - name: ""
+    action_ns: abb/joint_trajectory_action
+    type: FollowJointTrajectory
+    joints:
+      - abb_joint_1
+      - abb_joint_2
+      - abb_joint_3
+      - abb_joint_4
+      - abb_joint_5
+      - abb_joint_6

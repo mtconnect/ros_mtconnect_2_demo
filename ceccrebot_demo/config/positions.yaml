@@ -1,0 +1,117 @@
+joints:
+    - ur_shoulder_pan_joint
+    - ur_shoulder_lift_joint
+    - ur_elbow_joint
+    - ur_wrist_1_joint
+    - ur_wrist_2_joint
+    - ur_wrist_3_joint
+#joint positions are in degrees for ease of manually grabbing from the pendant
+positions:
+    home:
+        position: [-60.0, -90.0, -90.0, -90.0, 90.0, -90.0]
+        speed_factor: 1.0
+    high_center:
+        position: [0.0, -55.0, -115.0, -95.0, 90.0, -70.0]
+        speed_factor: 1.0
+    vertical:
+        position: [0.0, -90.0, 0.0, 0.0, 0.0, 0.0]
+        speed_factor: 1.0
+    cnc_default_waypoint:
+        position: [58.66, -57.35, -142.06, -69.60, 89.24, -67.20]
+        speed_factor: 1.0
+    cnc_default_door:
+        position: [97.45, -72.04, -134.87, -62.00, 89.28, -72.98]
+        speed_factor: 1.0
+    cnc_default_door2:
+        position: [95.20, -110.45, -89.13, -67.65, 89.42, -65.29]
+        speed_factor: 1.0
+    cnc_default_pregrasp:
+        position: [97.01, -132.04, -79.00, -58.56, 89.07, -61.95]
+        speed_factor: 0.2
+    cnc_default_pick:
+        position: [97.02, -135.07, -80.21, -54.30, 89.06, -61.94]
+        speed_factor: 0.1
+    cnc_default_place:
+        position: [96.95, -135.07, -80.00, -54.51, 89.07, -62.02]
+        speed_factor: 0.1
+    cmm_default_waypoint:
+        position: [-71.09, -52.21, -134.59, -83.32, 90.25, 10.25]
+        speed_factor: 1.0
+    cmm_default_waypoint2:
+        position: [-116.63, -70.97, -125.46, -73.61, 90.12, -34.99]
+        speed_factor: 1.0
+    cmm_default_waypoint3:
+        position: [-137.03, -92.14, -107.73, -70.14, 90.02, -55.38]
+        speed_factor: 1.0
+    cmm_default_pregrasp:
+        position: [-143.11, -124.80, -94.89, -50.38, 89.68, -31.94]
+        speed_factor: 0.5
+    cmm_default_pick:
+        position: [-143.54, -128.28, -94.78, -48.01, 90.83, -32.18]
+        speed_factor: 0.1
+    cmm_default_place:
+        position: [-143.30, -127.81, -95.56, -46.76, 90.39, -32.89]
+        speed_factor: 0.1
+    conv_good_pregrasp:
+        position: [-59.93, -121.68, -85.15, -62.61, 90.20, -36.03]
+        speed_factor: 1.0
+    conv_good_pick:
+        position: [-60.10, -123.12, -86.50, -60.32, 91.14, -35.86]
+        speed_factor: 0.1
+    conv_good_place:
+        position: [-60.10, -122.93, -86.33, -60.69, 91.15, -35.86]
+        speed_factor: 0.1
+    conv_bad_pregrasp:
+        position: [-50.48, -104.40, -110.29, -54.99, 89.86, -26.38]
+        speed_factor: 1.0
+    conv_bad_pick:
+        position: [-50.27, -106.29, -112.14, -51.27, 89.83, -26.22]
+        speed_factor: 0.1
+    conv_bad_place:
+        position: [-50.27, -106.07, -111.98, -51.64, 89.83, -26.22]
+        speed_factor: 0.1
+    conv_rework_pregrasp:
+        position: [-64.31, -97.84, -118.08, -53.73, 89.98, -40.20]
+        speed_factor: 1.0
+    conv_rework_pick:
+        position: [-64.04, -100.02, -120.61, -49.03, 89.95, -39.98]
+        speed_factor: 0.1
+    conv_rework_place:
+        position: [-64.04, -99.81, -120.48, -49.38, 89.96, -39.97]
+        speed_factor: 0.1
+    buff_default_pregrasp:
+        position: [-71.29, -116.75, -92.67, -60.09, 90.34, -47.37]
+        speed_factor: 1.0
+    buff_default_pick:
+        position: [-71.17, -118.03, -94.97, -56.37, 90.29, -47.05]
+        speed_factor: 0.1
+    buff_default_place:
+        position: [-71.17, -117.91, -94.88, -56.58, 90.29, -47.05]
+        speed_factor: 0.1
+    tabletool_default_pregrasp:
+        position: [-47.02, -114.59, -78.66, -76.12, 90.27, -22.66]
+        speed_factor: 1.0
+    tabletool_default_pick:
+        position: [-47.02, -118.25, -85.97, -65.14, 90.26, -22.65]
+        speed_factor: 0.1
+    tabletool_default_place:
+        position: [-47.02, -118.21, -85.90, -65.27, 90.26, -22.65]
+        speed_factor: 0.1
+    cnctool_default_waypoint:
+        position: [58.66, -57.35, -142.06, -69.60, 89.24, -67.20]
+        speed_factor: 1.0
+    cnctool_default_door:
+        position: [97.45, -72.04, -134.87, -62.00, 89.28, -72.98]
+        speed_factor: 1.0
+    cnctool_default_door2:
+        position: [95.20, -110.45, -89.13, -67.65, 89.42, -65.29]
+        speed_factor: 1.0
+    cnctool_default_pregrasp:
+        position: [86.54, -139.48, -61.88, -68.35, 89.54, -163.50]
+        speed_factor: 0.2
+    cnctool_default_pick:
+        position: [86.54, -143.23, -64.20, -62.26, 89.52, -163.51]
+        speed_factor: 0.1
+    cnctool_default_place:
+        position: [86.54, -142.87, -64.07, -62.76, 89.52, -163.51]
+        speed_factor: 0.1

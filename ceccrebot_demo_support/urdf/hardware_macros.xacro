@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- Robot support -->
+  <xacro:macro name="platform" params="name parent_link length width height material *location">
+    <link name="${name}_platform_link">
+      <visual>
+        <origin xyz="0.0 0.0 -${height * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${length} ${width} ${height}"/>
+        </geometry>
+        <material name="${material}"/>
+      </visual>
+      <collision name="{name}_platform">
+        <geometry>
+          <box size="${length} ${width} ${height}"/>
+        </geometry>
+        <origin xyz="0.0 0.0 -${height * 0.5}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_platform_joint" type ="fixed">
+      <xacro:insert_block name="location"/>
+      <parent link="${parent_link}"/>
+      <child link="${name}_platform_link"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="part_table" params="name parent_link length width height *location">
+    <link name="${name}_platform_link">
+      <!-- Main blue body -->
+      <visual>
+        <origin xyz="0.0 0.0 -0.457" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.635 0.457 0.711"/>
+        </geometry>
+        <material name="teal_blue"/>
+      </visual>
+      <!-- Left gray panel -->
+      <visual>
+        <origin xyz="-0.3365 0.0 -0.546" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.038 0.508 0.940"/>
+        </geometry>
+        <material name="light_gray">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Right gray panel -->
+      <visual>
+        <origin xyz="0.3365 0.0 -0.546" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.038 0.508 0.940"/>
+        </geometry>
+        <material name="light_gray">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Glass surface -->
+      <visual>
+        <origin xyz="0.0 -0.05 -0.006" rpy="0 0 0"/>
+        <geometry>
+          <box size="1.016 0.610 0.012"/>
+        </geometry>
+        <material name="glass">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Front left steel post -->
+      <visual>
+        <origin xyz="-0.3365 -0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Front right steel post -->
+      <visual>
+        <origin xyz="0.3365 -0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Back left steel post -->
+      <visual>
+        <origin xyz="-0.3365 0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- Back right steel post -->
+      <visual>
+        <origin xyz="0.3365 0.16 -0.0444" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.064" radius="0.013"/>
+        </geometry>
+        <material name="steel">
+            <color rgba="0.8 0.8 0.8 0.1"/>
+        </material>
+      </visual>
+      <!-- One unified collision geometry -->
+      <collision name="{name}_platform">
+        <geometry>
+          <box size="${length} ${width} ${height}"/>
+        </geometry>
+        <origin xyz="0.0 0.0 -${height * 0.5}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_platform_joint" type ="fixed">
+      <xacro:insert_block name="location"/>
+      <parent link="${parent_link}"/>
+      <child link="${name}_platform_link"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- CNC -->
+  <xacro:macro name="cnc" params="id parent_link *location">
+    <link name="cnc_${id}_base">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/cnc_lathe.dae"/>
+        </geometry>
+        <material name="light_gray"/>
+      </visual>
+      <collision name="cnc_${id}_base">
+        <geometry>
+          <box size="2.0 1.6 0.7"/>
+        </geometry>
+        <origin xyz="1.0 0.8 0.35"/>
+      </collision>
+      <collision name="cnc_${id}_back">
+        <geometry>
+          <box size="2.0 1.0 0.9"/>
+        </geometry>
+        <origin xyz="1.0 0.5 1.15"/>
+      </collision>
+      <collision name="cnc_${id}_right_wall">
+        <geometry>
+          <box size="0.5 1.6 0.9"/>
+        </geometry>
+        <origin xyz="0.25 0.8 1.15"/>
+      </collision>
+      <collision name="cnc_${id}_left_wall">
+        <geometry>
+          <box size="0.75 1.6 1.5"/>
+        </geometry>
+        <origin xyz="1.625 0.8 1.45"/>
+      </collision>
+    </link>
+    <joint name="cnc_${id}_joint" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="${parent_link}"/>
+      <child link="cnc_${id}_base"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- VM5i CNC -->
+  <xacro:macro name="cnc_VM5i" params="id parent_link *location">
+    <!-- Machine reference point in STL -->
+    <!-- x = right, y = up, z = out front door -->
+    <!-- x = -50.0, y = 1054.28, z = 207.0 -->
+    <link name="cnc_${id}_base">
+      <visual>
+        <origin xyz="0.0 1.75 0.0" rpy="1.571 0 0"/>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/VM5i_DoorsOpen_lightweight.stl" scale = "0.001 0.001 0.001"/>
+        </geometry>
+        <material name="light_gray"/>
+      </visual>
+
+      <collision name="cnc_${id}_base">
+        <geometry>
+          <box size="1.6 1.8 0.8"/>
+        </geometry>
+        <origin xyz="0.8 0.9 0.3" />
+      </collision>
+      <collision name="cnc_${id}_back">
+        <geometry>
+          <box size="1.40 0.35 2.0"/>
+        </geometry>
+        <origin xyz="0.8 1.05 1.0" />
+      </collision>
+      <collision name="cnc_${id}_right_wall">
+        <geometry>
+          <box size="0.15 1.7 2.0"/>
+        </geometry>
+        <origin xyz="1.42 0.85 1.0" />
+      </collision>
+      <collision name="cnc_${id}_left_wall">
+        <geometry>
+          <box size="0.4 1.7 2.0"/>
+        </geometry>
+        <origin xyz="0.2 0.85 1.0" />
+      </collision>
+      <!--
+      <collision name="cnc_${id}_computer">
+        <geometry>
+          <box size="0.5 1.2 0.8"/>
+        </geometry>
+        <origin xyz="1.4 -0.6 1.5"/>
+      </collision>
+      -->
+    </link>
+    <joint name="cnc_${id}_joint" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="${parent_link}"/>
+      <child link="cnc_${id}_base"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- CMM -->
+  <xacro:macro name="cmm" params="id parent_link *location">
+    <link name="cmm_${id}_base">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/Hexagon-MI-TIGOSF-CADModelwHP-S-X1_lightweight.stl" scale = "0.001 0.001 0.001" />
+        </geometry>
+        <material name="light_gray"/>
+      </visual>
+
+      <collision name="cmm_${id}_base">
+        <geometry>
+          <box size=".8 1.25 0.95"/>
+        </geometry>
+        <origin xyz="0.3 0.6 -.4"/>
+      </collision>
+      <collision name="cmm_${id}_probe_area">
+        <geometry>
+          <box size=".25 .25 1.3"/>
+        </geometry>
+        <origin xyz="0.55 0.675 0.95"/>
+      </collision>
+      <collision name="cmm_${id}_back_wall">
+        <geometry>
+          <box size="1.25 0.5 1.0"/>
+        </geometry>
+        <origin xyz=".5 .2 0.5"/>
+      </collision>
+      <collision name="cmm_${id}_probe_gantry">
+        <geometry>
+          <box size="0.35 1.4 0.25"/>
+        </geometry>
+        <origin xyz="0.6 0.475 0.75"/>
+      </collision>
+      <collision name="cmm_${id}_computer">
+        <geometry>
+          <box size="0.5 0.5 1.0"/>
+        </geometry>
+        <origin xyz="-0.5 0.9 0.1"/>
+      </collision>
+    </link>
+
+    <joint name="cmm_${id}_joint" type ="fixed">
+      <xacro:insert_block name="location"/>
+      <parent link="${parent_link}"/>
+      <child link="cmm_${id}_base"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Conveyor -->
+  <xacro:macro name="conveyor" params="id parent_link *location">
+    <link name="conveyor_${id}">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/conveyor_piece.dae"/>
+        </geometry>
+        <origin xyz="0 0 0.725" rpy="0 0 1.5708"/>
+      </visual>
+      <collision name="conveyor_${id}_coll">
+        <geometry>
+          <box size="1.5 0.8 0.8"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.4"/>
+      </collision>
+    </link>
+
+    <joint name="conveyor_${id}" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="${parent_link}"/>
+      <child link="conveyor_${id}"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Demo Part-->
+  <xacro:macro name="part" params="id parent_link *location">
+    <link name="part_${id}">
+      <visual>
+        <geometry>
+          <mesh filename="package://ceccrebot_demo_support/meshes/AMTDemoPart.stl" scale = "0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      </visual>
+      <collision name="part_${id}_coll">
+        <geometry>
+          <box size="0.1 0.2 0.3"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0"/>
+      </collision>
+    </link>
+
+    <joint name="part_${id}" type ="fixed">
+      <xacro:insert_block name="location" />
+      <parent link="${parent_link}"/>
+      <child link="part_${id}"/>
+    </joint>
+  </xacro:macro>
+
+
+</robot>

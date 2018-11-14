@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur10">
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro" />
+  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
+  <xacro:include filename="$(find ur_description)/urdf/ur10.urdf.xacro" />
+
+  <xacro:property name="root_frame_id" value="world_frame"/>
+  <xacro:property name="platform_thickness" value="1.0414"/>
+  <xacro:property name="table_height" value="1.01"/>
+
+  <!-- root link -->
+  <link name="${root_frame_id}"/>
+
+  <!-- Robot support -->
+  <xacro:platform name="robot" parent_link="${root_frame_id}" length="0.1" width="0.1" height="${platform_thickness}" material="orange">
+    <origin xyz="0.0 0.0 ${platform_thickness}"/>
+  </xacro:platform>
+
+  <!-- Part table -->
+  <xacro:part_table name="part_table" parent_link="${root_frame_id}" length="1.016" width="0.610" height="${table_height}">
+      <origin xyz="-0.345 0.788	 ${table_height}" rpy="0 0 0"/>
+  </xacro:part_table>
+
+  <!-- CNC -->
+  <xacro:cnc_VM5i id="A" parent_link="${root_frame_id}">
+    <origin xyz="0.60 -0.55 0.0" rpy="0 0 3.1415"/>
+  </xacro:cnc_VM5i>
+
+  <!-- CMM -->
+  <xacro:cmm id="A" parent_link="${root_frame_id}">
+    <origin xyz="1.68 0.15 0.815" rpy="0 0 1.5708"/>
+  </xacro:cmm>
+
+  <!-- Demo Parts -->
+  <!--
+  <xacro:part id="1" parent_link="${root_frame_id}">
+    <origin xyz="0.75 0.5 0.95 " rpy="0 0 -1.5708"/>
+  </xacro:part>
+  -->
+
+  <!-- Robot -->
+  <xacro:ur10_robot prefix="ur_" joint_limited="true" elbow_joint_lower_limit="-2.6"/>
+  <joint name="robot_platform_to_robot_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0.02"/>
+    <parent link="robot_platform_link"/>
+    <child link="ur_base_link"/>
+  </joint>
+
+  <link name="ur_gripper_adapter_link">
+    <visual>
+      <origin xyz="0 0 -0.015"/>
+      <geometry>
+          <cylinder radius="0.04" length="0.03"/>
+      </geometry>
+      <material name="darkblue">
+        <color rgba="0.4 0.4 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="gripper_adapter_joint" type="fixed">
+    <origin xyz="0 0 0.03" rpy="0 0 0"/>
+    <parent link="ur_tool0"/>
+    <child link="ur_gripper_adapter_link"/>
+  </joint>
+
+  <!-- Robotiq Gripper -->
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/robotiq/s-model_articulated_macro.xacro" />
+  <xacro:s-model_articulated prefix=""/>
+  <joint name="EEjoint" type ="fixed">
+    <origin rpy="1.571 0 -0.4" xyz="0 0 0.04"/>
+    <parent link="ur_gripper_adapter_link"/>
+    <child link="palm"/>
+  </joint>
+
+</robot>
+
+

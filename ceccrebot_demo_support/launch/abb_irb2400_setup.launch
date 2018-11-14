@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="sim_robot" default="true"/>
+  <arg name="sim_gripper" default="true"/>
+  <arg name="robot_ip" if="$(arg sim_robot)"/>
+  <arg name="gripper_ip" if="$(arg sim_gripper)"/>
+  <arg name="use_bswap" default="false"/>
+
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder $(find ceccrebot_demo_support)/urdf/abb_irb2400_robot.urdf.xacro"/>
+  <rosparam param="controller_joint_names" command="load"
+            file="$(find ceccrebot_demo_support)/config/irb2400_joint_names.yaml"/>
+
+  <include file="$(find demo_abb_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="false"/>
+  </include>
+
+  <include file="$(find demo_abb_moveit_config)/launch/move_group.launch">
+    <arg name="fake_execution" value="false" />
+    <arg name="publish_monitored_planning_scene" value="true" />
+  </include>
+
+  <!-- Robot interfaces, real or simulated -->
+  <group unless="$(arg sim_robot)">
+  </group>
+
+  <group if="$(arg sim_robot)">
+    <include file="$(find industrial_robot_simulator)/launch/robot_interface_simulator.launch"/>
+  </group>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- TODO -->
+  <!-- Will need to replace grasping action nodes with real drivers -->
+  <!-- real gripper drivers -->
+  <!--
+  <group unless="$(arg sim_gripper)">
+
+    <remap from="/gripper_action_service/grasp_execution_action" to="/gripper_action_service"/>
+    <include file="$(find ceccrebot_demo_support)/launch/mtconnect_grasp_action.launch">
+      <arg name="robot_ip" value="$(arg gripper_ip)"/>
+      <arg name="port" value="11010"/>
+      <arg name="node_name" value="gripper_action_service"/>
+      <arg name="use_bswap" value="$(arg use_bswap)" />
+    </include>
+
+    <remap from="/vise_action_service/grasp_execution_action" to="/vise_action_service"/>
+    <include file="$(find ceccrebot_demo_support)/launch/mtconnect_grasp_action.launch">
+      <arg name="robot_ip" value="$(arg gripper_ip)"/>
+      <arg name="port" value="11011"/>
+      <arg name="node_name" value="vise_action_service"/>
+      <arg name="use_bswap" value="$(arg use_bswap)" />
+    </include>
+
+  </group>
+  -->
+
+  <!-- TODO -->
+  <!-- simulated gripper drivers -->
+  <!--
+  <group if="$(arg sim_gripper)">
+
+    <node pkg="object_manipulation_tools" type="grasp_action_service" name="gripper_interface">
+      <remap from="/grasp_execution_action" to="/gripper_action_service"/>
+    </node>
+
+    <node pkg="object_manipulation_tools" type="grasp_action_service" name="vise_interface">
+      <remap from="/grasp_execution_action" to="/vise_action_service"/>
+    </node>
+
+  </group>
+  -->
+</launch>

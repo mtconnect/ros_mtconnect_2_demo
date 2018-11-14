@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="sim" default="false"/>
+  <arg name="ns" default="ur"/>
+  <arg name="activate" default="True" />
+  <arg name="slave_number" default="1" />
+  <arg name="ifname" default="enp9s0"/>
+
+  <group ns="$(arg ns)" unless="$(arg sim)">
+      <param name="ifname" value="$(arg ifname)"/>
+
+      <node pkg="robotiq_s_model_control" type="s_model_ethercat_node" name="robotiq_gripper" output="screen">
+          <param name="activate" type="bool" value="$(arg activate)" />
+          <param name="slave_number" type="int" value="$(arg slave_number)"/>
+      </node>
+
+      <node pkg="ceccrebot_demo" type="gripper_control_node" name="gripper_control" output="screen">
+        <remap from="input" to="robotiq_gripper/input"/>
+        <remap from="output" to="robotiq_gripper/output"/>
+      </node>
+  </group>
+
+  <group ns="$(arg ns)" if="$(arg sim)">
+      <node pkg="ceccrebot_demo" type="fake_gripper_node" name="gripper_control" output="screen"/>
+  </group>
+</launch>

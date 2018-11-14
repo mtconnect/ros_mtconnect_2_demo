@@ -1,0 +1,15 @@
+cnc:
+  name: [abb_joint_1, abb_joint_2, abb_joint_3, abb_joint_4, abb_joint_5, abb_joint_6]
+  position: [1.589384610569865, 1.1725165525986145, -0.25970813730747105, -0.014540052557447568, 0.597739887297131, 0.028174468047314383]
+input_conveyor:
+  name: [abb_joint_1, abb_joint_2, abb_joint_3, abb_joint_4, abb_joint_5, abb_joint_6]
+  position: [1.589384610569865, 1.1725165525986145, -0.25970813730747105, -0.014540052557447568, 0.597739887297131, 0.028174468047314383]
+output_conveyor:
+  name: [abb_joint_1, abb_joint_2, abb_joint_3, abb_joint_4, abb_joint_5, abb_joint_6]
+  position: [-0.059029422100006404, 1.3120643943754198, -0.7790232468088455, -3.2125646228639937, -1.0327536011964893, 4.652379847186967]
+cmm:
+  name: [abb_joint_1, abb_joint_2, abb_joint_3, abb_joint_4, abb_joint_5, abb_joint_6]
+  position: [-1.245344335630921, 1.0844730268299823, -0.7293629738262274, -0.018924010486820606, 1.1573731378778471, 0.2950528341781947]
+all_zeros:
+  name: [abb_joint_1, abb_joint_2, abb_joint_3, abb_joint_4, abb_joint_5, abb_joint_6]
+  position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

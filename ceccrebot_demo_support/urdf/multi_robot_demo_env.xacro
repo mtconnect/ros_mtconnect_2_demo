@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<robot name="multi_robot_demo_env" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- macros -->
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/hardware_macros.xacro"/>
+  <xacro:include filename="$(find ceccrebot_demo_support)/urdf/materials.xacro"/>
+
+  <!-- parameters -->
+  <xacro:property name="platform_thickness" value="1.0414"/>
+  <xacro:property name="root_frame_id" value="world_frame"/>
+
+  <link name="${root_frame_id}"/>
+
+  <!-- Robot support -->
+  <xacro:platform name="cnc" parent_link="${root_frame_id}" thickness="${platform_thickness}" material="orange">
+    <origin xyz="2.0 0.0 ${platform_thickness}"/>
+  </xacro:platform>
+  <xacro:platform name="cmm" parent_link="${root_frame_id}" thickness="${platform_thickness}" material="light_blue">
+    <origin xyz="-2.0 0.0 ${platform_thickness}"/>
+  </xacro:platform>
+
+  <!--
+  <joint name="platform_to_cnc_robot_joint" type ="fixed">
+    <origin xyz="0 0 ${platform_thickness}"/>
+    <parent link="cnc_platform_link"/>
+    <child link="cnc_robot_base_link"/>
+  </joint>
+  <joint name="platform_to_cmm_robot_joint" type ="fixed">
+    <origin xyz="0 0 ${platform_thickness}"/>
+    <parent link="cmm_platform_link"/>
+    <child link="cmm_robot_base_link"/>
+  </joint>
+  -->
+
+  <!-- CNC -->
+  <xacro:cnc id="A" parent_link="${root_frame_id}">
+    <origin xyz="3.0 2.7 0.0" rpy="0 0 3.1415"/>
+  </xacro:cnc>
+  <xacro:cnc id="B" parent_link="${root_frame_id}">
+    <origin xyz="4.7 -1.0 0.0" rpy="0 0 1.5708"/>
+  </xacro:cnc>
+
+  <!-- CMM -->
+  <xacro:cmm id="A" parent_link="${root_frame_id}">
+    <origin xyz="-1.5 2.0 0.85" rpy="0 0 3.1415"/>
+  </xacro:cmm>
+
+  <xacro:conveyor id="1" parent_link="${root_frame_id}">
+    <origin xyz="0.0 0.0 0.0" />
+  </xacro:conveyor>
+  <xacro:conveyor id="2" parent_link="${root_frame_id}">
+    <origin xyz="2.0 -2.0 0.0" rpy="0.0 0.0 1.5708" />
+  </xacro:conveyor>
+  <xacro:conveyor id="3" parent_link="${root_frame_id}">
+    <origin xyz="-2.0 -2.0 0.0" rpy="0.0 0.0 -1.5708" />
+  </xacro:conveyor>
+</robot>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="rviz" default="true"/>
+  <arg name="sim_robot" default="true"/>
+  <arg name="sim_gripper" default="true"/>
+  <arg name="use_bswap" default="false"/>
+  <arg name="robot_ip" unless="$(arg sim_robot)" default="192.168.1.103"/>
+
+  <group ns="ur">
+    <include file="$(find ceccrebot_demo_support)/launch/ur10_in_scene_setup.launch">
+      <arg name="sim_robot" value="$(arg sim_robot)"/>
+      <arg name="sim_gripper" value="$(arg sim_gripper)"/>
+      <arg name="robot_ip" value="$(arg robot_ip)" unless="$(arg sim_robot)"/>
+    </include>
+
+    <!-- Location of the taught features on the machines -->
+    <node name="cmm_plane_publisher" pkg="tf" type="static_transform_publisher"
+          args="-0.57471 -0.40021 -0.16313 -0.07316 3.13856 -0.00200 ur_base cmm_plane 50" />
+
+    <node name="cnc_plane_publisher" pkg="tf" type="static_transform_publisher"
+          args="-0.29258 0.93955 -0.24073 -0.06022 3.13914 0.01439 ur_base cnc_plane 50" />
+
+    <node name="table_plane_publisher" pkg="tf" type="static_transform_publisher"
+          args="0.96320 -0.33751 -0.01037 -3.13562 -0.04621 -0.00647 ur_base table_plane 50" />
+
+    <node name="cnc_spindle_point_publisher" pkg="tf" type="static_transform_publisher"
+          args="0.1512 1.3084 0.0965 0 0 0 ur_base cnc_spindle_point 50"/>
+
+    <!-- CNC reference in robot coords (2018-07-17) -->
+    <!-- x = 127.82, y = 1223.56, z = 20.94 -->
+  </group>
+
+  <!-- Visualization -->
+  <node if="$(arg rviz)" pkg="rviz" type="rviz" name="ceccrebot_viz"
+        args="-d $(find ceccrebot_demo_support)/rviz/single_robot_demo.rviz" />
+</launch>

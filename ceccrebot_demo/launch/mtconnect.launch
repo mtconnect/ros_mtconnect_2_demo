@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <group ns="ur">
+    <node name="mtconnect_demo" pkg="ceccrebot_demo" type="mtconnect_demo.py" output="screen">
+      <rosparam command="load" file="$(find ceccrebot_demo)/config/mtconnect.yaml"/>
+      <param name="sim" value="false"/>
+      <param name="work_timeout" value="60.0"/>
+    </node>
+    <node name="mtconnect_publisher" pkg="mtconnect_bridge" type="ros_adapter.py" output="screen">
+      <rosparam command="load" file="$(find ceccrebot_demo)/config/mtconnect_publisher.yaml"/>
+    </node>
+  </group>
+</launch>

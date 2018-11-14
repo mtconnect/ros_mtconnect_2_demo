@@ -1,0 +1,16 @@
+#!/usr/bin/env python2
+import rospy
+import mtconnect_bridge
+
+def main():
+    rospy.init_node('bridge_test_node', anonymous=True)
+
+    args = rospy.myargv()
+    action, data = args[1:3]
+    rospy.loginfo("Sending to bridge (action = '{}', data = '{}')".format(action, data))
+
+    bridge = mtconnect_bridge.Bridge()
+    bridge.do_work(action, data)
+
+if __name__ == '__main__':
+    main()
