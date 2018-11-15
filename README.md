@@ -151,13 +151,23 @@ For these instructions, the ROS workspace is assumed to be `~/catkin_workspace` 
    
 5. `gedit`  
     
-    `/catkin_workspace/src/ros_mtconnect_2_demo/ceccrebot_demo/src/nodes/mtconnect_demo.py`
+    `~/catkin_workspace/src/ros_mtconnect_2_demo/ceccrebot_demo/src/nodes/mtconnect_demo.py`
 
 6. Change line 124 to
     
 	`os.chdir(os.path.join(os.getenv("HOME"), "catkin_workspace/src/ros_mtconnect_2/simulator/src"))`
 	
 7. Save and close
+
+8. `gedit`
+
+	`~/catkin_workspace/src/ros_mtconnect_2/simulator/src/collaborationModel/archetypeToInstance.py`
+	
+9. Change line 5 to
+
+	`path = os.path.join(os.getenv('HOME'), 'catkin_workspace/src/ros_mtconnect_2/simulator/src')`
+	
+10. Save and close
 
 
 **Create Python Environment**
