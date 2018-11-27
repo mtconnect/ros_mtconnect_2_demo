@@ -50,9 +50,9 @@ More details on catkin at `http://wiki.ros.org/catkin/Tutorials`
 1. Open a terminal and navigate to the `src/` directory of your newly created workspace.
     Run:
     
-    `git@github.com:mtconnect/ros_mtconnect_2.git`
+    `git clone https://github.com/mtconnect/ros_mtconnect_2.git`
     
-    `git@github.com:mtconnect/ros_mtconnect_2_demo.git`
+    `git clone https://github.com/mtconnect/ros_mtconnect_2_demo.git`
 
 
 ## Install Dependencies
@@ -86,9 +86,17 @@ There are a bunch of ROS packages that need to be identified as explicit depende
 
 If the build fails and then the respective ROS package/s (dependencies) must be manually installed as needed. When the compilation fails, scroll up the terminal until the first error is seen(red text). If it says something like  `cannot find industrial_coreConfig.cmake`, it means that is a missing ROS package. Run 
 
-`sudo apt-get install ros-kinetic-package-name`
+`sudo apt-get install ros-kinetic-industrial-core`
 
 to fix, where package-name is whatever appears in the error (e.g., "industrial_core"). Note the switch from underscores to hyphens from the ROS package name to the Ubuntu package name.
+
+If the build fails of `ceccrebot_demo` and the solution above doesnt work, try the following:
+
+    `sudo apt-get update`
+    `sudo apt-get dist-upgrade`
+	`catkin clean`
+	`catkin build`
+
 
 
 ## Compile the Project
@@ -99,9 +107,9 @@ With an open terminal anywhere under the root directory of the workspace, run ca
 
 Note:  If robotiq/robot_s_mode_control gives problems. Try the following:
 
-`cd src/robotiq/robot_s_model_control`
-`catkin build --this`
-`catkin build`
+    `cd src/robotiq/robotiq_s_model_control`
+    `catkin build --this`
+    `catkin build`
 
 
 ## Setup ROS environment
@@ -120,8 +128,8 @@ To check that the current terminal environment is correct, run `roscd` and see i
 ## Check Environment
 In a new terminal with an environment pointing to the project workspace (i.e. with the project's setup.bash file sources as discussed above), run one of the following:
 
-`roslaunch ceccrebot_demo_support single_robot_demo.launch`
-`roslaunch ceccrebot_demo_support multi_robot_demo.launch`
+    `roslaunch ceccrebot_demo_support single_robot_demo.launch`
+    `roslaunch ceccrebot_demo_support multi_robot_demo.launch`
 
 This launches a graphical environment to show the a (kinematically) simulated robot and an example workcell. If RViz starts up and a 3D visualization of a robot and other hardware is seen, everything is good to go.
 
@@ -188,7 +196,7 @@ Some of these steps may not be necessary depending on what software is already i
     
 	This will launch the pip environment in this terminal
 	
-6. `pip install transitions doublex requests mock`
+6. `pip install transitions doublex requests mock mamba`
 
 7. Open a new terminal and in that terminal type:
     
@@ -239,12 +247,18 @@ For launching live demo, two terminals will be neeeded. Both should have the ROS
     
     `roslaunch ceccrebot_demo_support robotiq_gripper.launch`
 
-2. Launch startup script
+2. Make sure that the robot is not initiated by the cell simulator.
+
+    `gedit ~/catkin_workspace/src/ros_mtconnect_2/simulator/src/cell.py`
+	
+	ln(30)    `#self.initiate_robot('localhost',7996)`    Should be commented out since it will be initiated in the ROS environment.
+	
+3. Launch startup script
     
     `cd ~/catkin_workspace/src/ros_mtconnect_2/simulator/src`
 
     `sh startup.sh`
 
-3. (Optional) To restart, `ctrl-c` both terminals and restart.
+4. (Optional) To restart, `ctrl-c` both terminals and restart.
 
-4. (Optional) Instead of using `startup.sh`, each `xterm` command within the file can be started in a separate terminals.
+5. (Optional) Instead of using `startup.sh`, each `xterm` command within the file can be started in a separate terminals.
