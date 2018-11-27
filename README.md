@@ -92,10 +92,13 @@ to fix, where package-name is whatever appears in the error (e.g., "industrial_c
 
 If the build fails of `ceccrebot_demo` and the solution above doesnt work, try the following:
 
-	`sudo apt-get update`
-	`sudo apt-get dist-upgrade`
-	`catkin clean`
-	`catkin build`
+`sudo apt-get update`
+
+`sudo apt-get dist-upgrade`
+
+`catkin clean`
+
+`catkin build`
 
 
 
@@ -107,9 +110,11 @@ With an open terminal anywhere under the root directory of the workspace, run ca
 
 Note:  If robotiq/robot_s_mode_control gives problems. Try the following:
 
-	`cd src/robotiq/robotiq_s_model_control`
-	`catkin build --this`
-	`catkin build`
+`cd src/robotiq/robotiq_s_model_control`
+
+`catkin build --this`
+
+`catkin build`
 
 
 ## Setup ROS environment
@@ -128,8 +133,9 @@ To check that the current terminal environment is correct, run `roscd` and see i
 ## Check Environment
 In a new terminal with an environment pointing to the project workspace (i.e. with the project's setup.bash file sources as discussed above), run one of the following:
 
-	`roslaunch ceccrebot_demo_support single_robot_demo.launch`
-	`roslaunch ceccrebot_demo_support multi_robot_demo.launch`
+`roslaunch ceccrebot_demo_support single_robot_demo.launch`
+	
+`roslaunch ceccrebot_demo_support multi_robot_demo.launch`
 
 This launches a graphical environment to show the a (kinematically) simulated robot and an example workcell. If RViz starts up and a 3D visualization of a robot and other hardware is seen, everything is good to go.
 
